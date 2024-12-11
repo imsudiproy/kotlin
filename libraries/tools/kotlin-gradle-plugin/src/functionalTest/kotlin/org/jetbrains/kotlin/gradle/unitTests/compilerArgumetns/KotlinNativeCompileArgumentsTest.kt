@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.main
 import org.jetbrains.kotlin.gradle.util.mockXcodeVersion
-import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
 import kotlin.test.*
 
@@ -228,13 +227,18 @@ class KotlinNativeCompileArgumentsTest {
             "org.jetbrains.kotlin.native.platform.$it"
         }.toSet()
 
-        val expectedDependencies = expectedPlatformDependencies + listOf("stdlib")
+        val actualNativeDependencies = nativeCompilation.nativeDependencies
+            .files
+            .map { it.name }
+            .toSet()
+
+        assertEquals(expectedPlatformDependencies, actualNativeDependencies)
 
         val actualDependencies = nativeCompilation.compileDependencyFiles
             .map { it.name }
             .toSet()
 
-        assertEquals(expectedDependencies, actualDependencies)
+        assertEquals(setOf("stdlib"), actualDependencies)
     }
 
     @Test
