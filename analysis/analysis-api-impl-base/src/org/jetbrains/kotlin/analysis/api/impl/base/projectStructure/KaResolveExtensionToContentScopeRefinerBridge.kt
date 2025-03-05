@@ -13,6 +13,13 @@ import org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionPr
 
 @KaImplementationDetail
 class KaResolveExtensionToContentScopeRefinerBridge : KotlinContentScopeRefiner {
+    override fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> =
+        if (KaResolveExtensionProvider.provideExtensionsFor(module).isNotEmpty()) {
+            listOf(KaBaseResolveExtensionGeneratedFilesScope(listOf(module)))
+        } else {
+            emptyList()
+        }
+
     override fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> =
         KaResolveExtensionProvider.provideExtensionsFor(module).map { resolveExtension ->
             GlobalSearchScope.notScope(resolveExtension.getShadowedScope())

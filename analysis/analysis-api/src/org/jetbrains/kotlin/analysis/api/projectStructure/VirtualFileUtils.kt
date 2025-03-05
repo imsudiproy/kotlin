@@ -20,3 +20,12 @@ import org.jetbrains.kotlin.psi.UserDataProperty
  */
 @KaImplementationDetail
 public var VirtualFile.analysisContextModule: KaModule? by UserDataProperty(Key.create("ANALYSIS_CONTEXT_MODULE"))
+
+/**
+ * Used by the Analysis API engine to mark [VirtualFile] generated from [KaResolveExtension][org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtension].
+ *
+ * This property is used to define whether [analysisContextModule] of a [VirtualFile]
+ * was set by [KaResolveExtensionProvider][org.jetbrains.kotlin.analysis.api.resolve.extensions.KaResolveExtensionProvider] or not.
+ */
+@KaImplementationDetail
+public var VirtualFile.isGeneratedByResolveExtensions: Boolean? by UserDataProperty(Key.create("IS_GENERATED_BY_RESOLVE_EXTENSIONS"))
