@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
+import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.expressions.*
@@ -533,36 +534,30 @@ internal class PartiallyLinkedIrTreePatcher(
 
                 val stabilityField = owner
 
-                val stabilityGetter = builtIns.irFactory.createSimpleFunction(
-                    startOffset = UNDEFINED_OFFSET,
-                    endOffset = UNDEFINED_OFFSET,
-                    name = Name.identifier(getterName),
-                    returnType = stabilityField.type,
-                    visibility = DescriptorVisibilities.PUBLIC,
-                    origin = PartiallyLinkedDeclarationOrigin.AUXILIARY_GENERATED_DECLARATION,
-                    isInline = false,
-                    isExpect = false,
-                    modality = Modality.FINAL,
-                    // k/wasm and k/js rely on signatures, therefore we must set a "unique" signature here
-                    symbol = IrSimpleFunctionSymbolImpl(signature = IdSignature.LoweredDeclarationSignature(parentField.symbol.signature!!, -1, 0)),
-                    isTailrec = false,
-                    isSuspend = false,
-                    isOperator = false,
-                    isInfix = false,
-                ).also { fn ->
-                    fn.parent = parent
-                    fn.body = builtIns.irFactory.createBlockBody(
-                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                        listOf(
-                            IrReturnImpl(
-                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                builtIns.nothingType,
-                                fn.symbol,
-                                IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this, stabilityField.type),
+                // We use stageController to make sure valid unique signatures are generated for k/js and k/wasm
+                val stabilityGetter = builtIns.irFactory.stageController.restrictTo(parentField) {
+                    builtIns.irFactory.buildFun {
+                        startOffset = UNDEFINED_OFFSET
+                        endOffset = UNDEFINED_OFFSET
+                        name = Name.identifier(getterName)
+                        returnType = stabilityField.type
+                        visibility = DescriptorVisibilities.PUBLIC
+                        origin = PartiallyLinkedDeclarationOrigin.AUXILIARY_GENERATED_DECLARATION
+                    }.also { fn ->
+                        fn.parent = parent
+                        fn.body = builtIns.irFactory.createBlockBody(
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                            listOf(
+                                IrReturnImpl(
+                                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                                    builtIns.nothingType,
+                                    fn.symbol,
+                                    IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, this, stabilityField.type),
+                                ),
                             ),
-                        ),
-                    )
-                    parent.addChild(fn)
+                        )
+                        parent.addChild(fn)
+                    }
                 }
 
                 return stabilityGetter
