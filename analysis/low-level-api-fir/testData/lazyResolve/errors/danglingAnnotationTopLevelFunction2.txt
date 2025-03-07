@@ -1,5 +1,5 @@
 BODY_RESOLVE:
-FILE: [ResolvedTo(IMPORTS)] danglingAnnotationOnTopLevelFunction2.kt
+FILE: [ResolvedTo(IMPORTS)] danglingAnnotationTopLevelFunction2.kt
     public final [ResolvedTo(STATUS)] annotation class Ann : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Ann] constructor(): R|Ann| {
             LAZY_super<R|kotlin/Any|>
@@ -8,7 +8,7 @@ FILE: [ResolvedTo(IMPORTS)] danglingAnnotationOnTopLevelFunction2.kt
     }
     [ResolvedTo(BODY_RESOLVE)] @R|Ann|[Types]() <DANGLING MODIFIER: Top level declaration expected>
 FILE RAW TO BODY:
-FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationOnTopLevelFunction2.kt
+FILE: [ResolvedTo(BODY_RESOLVE)] danglingAnnotationTopLevelFunction2.kt
     public final [ResolvedTo(BODY_RESOLVE)] annotation class Ann : R|kotlin/Annotation| {
         public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Ann] constructor(): R|Ann| {
             super<R|kotlin/Any|>()

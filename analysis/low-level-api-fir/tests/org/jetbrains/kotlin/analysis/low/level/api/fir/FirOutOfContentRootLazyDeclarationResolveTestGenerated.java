@@ -1254,27 +1254,27 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
-    @TestMetadata("danglingAnnotationOnMemberFunction.kt")
-    public void testDanglingAnnotationOnMemberFunction() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationOnMemberFunction.kt");
+    @TestMetadata("danglingAnnotationMemberFunction.kt")
+    public void testDanglingAnnotationMemberFunction() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationMemberFunction.kt");
     }
 
     @Test
-    @TestMetadata("danglingAnnotationOnTopLevelFunction.kt")
-    public void testDanglingAnnotationOnTopLevelFunction() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationOnTopLevelFunction.kt");
+    @TestMetadata("danglingAnnotationMemberFunction2.kt")
+    public void testDanglingAnnotationMemberFunction2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationMemberFunction2.kt");
     }
 
     @Test
-    @TestMetadata("danglingAnnotationOnTopLevelFunction2.kt")
-    public void testDanglingAnnotationOnTopLevelFunction2() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationOnTopLevelFunction2.kt");
+    @TestMetadata("danglingAnnotationTopLevelFunction.kt")
+    public void testDanglingAnnotationTopLevelFunction() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationTopLevelFunction.kt");
     }
 
     @Test
-    @TestMetadata("danglingAnnotationOnTopLevelFunctionWithParameter.kt")
-    public void testDanglingAnnotationOnTopLevelFunctionWithParameter() {
-      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationOnTopLevelFunctionWithParameter.kt");
+    @TestMetadata("danglingAnnotationTopLevelFunction2.kt")
+    public void testDanglingAnnotationTopLevelFunction2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationTopLevelFunction2.kt");
     }
 
     @Test

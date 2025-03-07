@@ -1,5 +1,5 @@
 annotation class Ann
 
-@Ann(
+@Ann(""
 fun <caret>foo() = 42
-class A
+@Ann
