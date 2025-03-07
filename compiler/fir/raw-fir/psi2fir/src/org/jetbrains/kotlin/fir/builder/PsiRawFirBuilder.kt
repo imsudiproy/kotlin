@@ -2941,7 +2941,7 @@ open class PsiRawFirBuilder(
                             buildWhenBranch(hasGuard = entryGuard != null) {
                                 source = entrySource
                                 condition = entry.conditions.toFirWhenCondition(
-                                    ref,
+                                    subjectVariable,
                                     { errorReason, fallbackSource ->
                                         toFirExpression(errorReason, sourceWhenInvalidExpression = fallbackSource)
                                     },
@@ -2965,20 +2965,22 @@ open class PsiRawFirBuilder(
                                                 )
                                             } else {
                                                 shouldBind = true
-                                                buildErrorExpression {
-                                                    source = condition.toFirSourceElement()
-                                                    nonExpressionElement = condition.toFirWhenCondition(
-                                                        ref,
-                                                        { errorReason, fallbackSource ->
+                                                val convertedCondition = condition.toFirWhenCondition(
+                                                    subjectVariable,
+                                                    { errorReason, fallbackSource ->
                                                             toFirExpression(errorReason, sourceWhenInvalidExpression = fallbackSource)
                                                         },
-                                                        { toFirOrErrorType() },
-                                                    )
-                                                    diagnostic = ConeSimpleDiagnostic(
-                                                        "No expression in condition with expression",
-                                                        DiagnosticKind.ExpressionExpected,
-                                                    )
-                                                }
+                                                    { toFirOrErrorType() },
+                                                )
+                                                convertedCondition.takeIf { subjectVariable != null }
+                                                    ?: buildErrorExpression {
+                                                        source = condition.toFirSourceElement()
+                                                        this.nonExpressionElement = convertedCondition
+                                                        diagnostic = ConeSimpleDiagnostic(
+                                                            "No expression in condition with expression",
+                                                            DiagnosticKind.ExpressionExpected,
+                                                        )
+                                                    }
                                             }
                                         })
                                     }.guardedBy(entryGuard)
