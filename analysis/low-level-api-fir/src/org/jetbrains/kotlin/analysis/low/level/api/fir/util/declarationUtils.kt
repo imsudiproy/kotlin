@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiErrorElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.projectStructure.copyOrigin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
@@ -29,7 +31,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -292,3 +296,68 @@ fun findStringPlusSymbol(session: FirSession): FirNamedFunctionSymbol? {
         it is FirSimpleFunction && it.name == OperatorNameConventions.PLUS
     }?.symbol as? FirNamedFunctionSymbol
 }
+
+/**
+ * A common pattern of illegal code, where an annotation is dangling (not attached to anything),
+ * or unclosed and followed by a declaration.
+ *
+ * Examples:
+ *
+ * ```kotlin
+ * class C1 {
+ *     @Ann1 @Ann2
+ * }
+ *
+ * class C2 {
+ *     @Ann(
+ *     fun foo() {}
+ * }
+ *
+ * @Ann("argument"
+ * fun foo() {}
+ * ```
+ * @see org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
+ */
+fun KtModifierList.isNonLocalDanglingModifierList(): Boolean {
+    fun KtElement.hasSyntaxError() = getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement
+
+    fun KtModifierList.isLocal(): Boolean {
+        val parent = parent
+        if (parent is KtFile) return false
+        if (parent is KtClassBody && (parent.parent as? KtClassOrObject)?.isLocal() == false) return false
+        return true
+    }
+
+    if (isLocal()) {
+        // We ignore local dangling modifier lists for LL file structure purposes
+        return false
+    }
+
+    if (getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement) {
+        return true
+    }
+
+    if (anyDescendantOfType<PsiErrorElement>()) {
+        // TODO comment
+        return true
+    }
+
+    return false
+
+    /*if (hasSyntaxError()) return true
+
+    val lastAnnotation = childrenOfType<KtAnnotationEntry>().lastOrNull() ?: return false
+    if (lastAnnotation.hasSyntaxError()) return true
+
+    val argumentList = lastAnnotation.childrenOfType<KtValueArgumentList>().singleOrNull() ?: return false
+    if (argumentList.hasSyntaxError()) return true
+
+    // There can be multiple arguments, for example,
+    // @Ann("real argument 1"
+    // fun foo() {} // fake argument 2
+    val arguments = argumentList.childrenOfType<KtValueArgument>()
+    return arguments.any { it.hasSyntaxError() }*/
+}
+
+fun KtElement.isInsideNonLocalDanglingModifierList(): Boolean =
+    parentOfType<KtModifierList>()?.isNonLocalDanglingModifierList() == true
