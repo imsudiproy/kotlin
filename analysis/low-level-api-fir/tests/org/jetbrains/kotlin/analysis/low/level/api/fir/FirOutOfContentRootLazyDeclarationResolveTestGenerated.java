@@ -1266,6 +1266,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("danglingAnnotationMemberFunction3.kt")
+    public void testDanglingAnnotationMemberFunction3() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationMemberFunction3.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationTopLevelFunction.kt")
     public void testDanglingAnnotationTopLevelFunction() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationTopLevelFunction.kt");
@@ -1275,6 +1281,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("danglingAnnotationTopLevelFunction2.kt")
     public void testDanglingAnnotationTopLevelFunction2() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationTopLevelFunction2.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationTopLevelFunction3.kt")
+    public void testDanglingAnnotationTopLevelFunction3() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationTopLevelFunction3.kt");
     }
 
     @Test

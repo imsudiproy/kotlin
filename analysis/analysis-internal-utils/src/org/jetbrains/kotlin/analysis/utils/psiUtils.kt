@@ -14,6 +14,8 @@ import com.intellij.psi.util.parentOfType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
 
 public val PsiClass.classId: ClassId?
@@ -88,7 +90,18 @@ public fun KtModifierList.isNonLocalDanglingModifierList(): Boolean {
         return false
     }
 
-    if (hasSyntaxError()) return true
+    if (getNextSiblingIgnoringWhitespaceAndComments() is PsiErrorElement) {
+        return true
+    }
+
+    if (anyDescendantOfType<PsiErrorElement>()) {
+        // TODO comment
+        return true
+    }
+
+    return false
+
+    /*if (hasSyntaxError()) return true
 
     val lastAnnotation = childrenOfType<KtAnnotationEntry>().lastOrNull() ?: return false
     if (lastAnnotation.hasSyntaxError()) return true
@@ -100,7 +113,7 @@ public fun KtModifierList.isNonLocalDanglingModifierList(): Boolean {
     // @Ann("real argument 1"
     // fun foo() {} // fake argument 2
     val arguments = argumentList.childrenOfType<KtValueArgument>()
-    return arguments.any { it.hasSyntaxError() }
+    return arguments.any { it.hasSyntaxError() }*/
 }
 
 public fun KtElement.isInsideNonLocalDanglingModifierList(): Boolean =
