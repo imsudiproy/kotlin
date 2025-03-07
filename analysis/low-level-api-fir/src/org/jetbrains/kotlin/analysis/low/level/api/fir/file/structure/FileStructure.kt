@@ -187,7 +187,7 @@ internal class FileStructure private constructor(
             }
 
             override fun visitModifierList(list: KtModifierList) {
-                if (list.parent == ktFile) {
+                if (list.isNonLocalDanglingModifierList()) {
                     addStructureElementForTo(list, structureElements)
                 }
             }
