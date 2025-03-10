@@ -482,15 +482,15 @@ private class CallInlining(
 
         fun IdSignature.isFunctionOrKFunction(): Boolean {
             return with(this as? IdSignature.CommonSignature ?: return false) {
-                packageFqName == StandardNames.BUILT_INS_PACKAGE_NAME.asString() &&
-                        (declarationFqName == "Function" || declarationFqName == "KFunction")
+                packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME.asString() && shortName.startsWith("Function") ||
+                        packageFqName == StandardNames.KOTLIN_REFLECT_FQ_NAME.asString() && shortName.startsWith("KFunction")
             }
         }
 
         fun IdSignature.isSuspendFunctionOrKFunction(): Boolean {
             return with(this as? IdSignature.CommonSignature ?: return false) {
-                packageFqName == StandardNames.BUILT_INS_PACKAGE_NAME.asString() &&
-                        (declarationFqName == "Function" || declarationFqName == "KFunction")
+                packageFqName == StandardNames.COROUTINES_PACKAGE_FQ_NAME.asString() && shortName.startsWith("SuspendFunction") ||
+                        packageFqName == StandardNames.KOTLIN_REFLECT_FQ_NAME.asString() && shortName.startsWith("KSuspendFunction")
             }
         }
 
