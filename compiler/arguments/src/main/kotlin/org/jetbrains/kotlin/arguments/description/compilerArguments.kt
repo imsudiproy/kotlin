@@ -5,18 +5,11 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.dsl.compilerArguments
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.jetbrains.kotlin.arguments.*
+import org.jetbrains.kotlin.arguments.dsl.compilerArguments
 import org.jetbrains.kotlin.arguments.types.BooleanType
-import org.jetbrains.kotlin.arguments.CompilerArguments
-import org.jetbrains.kotlin.arguments.KotlinReleaseVersion
-import org.jetbrains.kotlin.arguments.types.KotlinJvmTargetType
-import org.jetbrains.kotlin.arguments.types.KotlinVersionType
-import org.jetbrains.kotlin.arguments.ReleaseDependent
-import org.jetbrains.kotlin.arguments.asReleaseDependent
-import org.jetbrains.kotlin.arguments.compilerArgument
-import org.jetbrains.kotlin.arguments.compilerArgumentsLevel
 import java.io.File
 
 val someArguments by compilerArgument {
@@ -72,132 +65,9 @@ val deprecatedCommonArgs by compilerArgumentsLevel("commonCompilerArguments") {
 }
 
 val kotlinCompilerArguments = compilerArguments {
-    topLevel("commonToolArguments") {
-        compilerArgument {
-            name = "help"
-            shortName = "h"
-            description = "Print a synopsis of standard options.".asReleaseDependent()
-
-            valueType = BooleanType(
-                isNullable = false.asReleaseDependent(),
-                defaultValue = false.asReleaseDependent()
-            )
-
-            lifecycle(
-                introducedVersion = KotlinReleaseVersion.v1_4_0,
-                stabilizedVersion = KotlinReleaseVersion.v1_4_0
-            )
-        }
-
-        compilerArgument {
-            name = "X"
-            description = "Print a synopsis of advanced options.".asReleaseDependent()
-
-            valueType = BooleanType(
-                isNullable = false.asReleaseDependent(),
-                defaultValue = false.asReleaseDependent()
-            )
-
-            lifecycle(
-                introducedVersion = KotlinReleaseVersion.v1_9_20
-            )
-        }
-
-        compilerArgument {
-            name = "version"
-            description = "Display the compiler version.".asReleaseDependent()
-
-            valueType = BooleanType(
-                isNullable = false.asReleaseDependent(),
-                defaultValue = false.asReleaseDependent()
-            )
-
-            lifecycle(
-                introducedVersion = KotlinReleaseVersion.v1_9_20
-            )
-        }
-
-        compilerArgument {
-            name = "verbose"
-            description = "Enable verbose logging output.".asReleaseDependent()
-
-            valueType = BooleanType(
-                isNullable = false.asReleaseDependent(),
-                defaultValue = false.asReleaseDependent()
-            )
-
-            lifecycle(
-                introducedVersion = KotlinReleaseVersion.v1_9_20
-            )
-        }
-
-        compilerArgument {
-            name = "nowarn"
-            description = "Don't generate any warnings.".asReleaseDependent()
-
-            valueType = BooleanType(
-                isNullable = false.asReleaseDependent(),
-                defaultValue = false.asReleaseDependent()
-            )
-
-            lifecycle(
-                introducedVersion = KotlinReleaseVersion.v1_9_20
-            )
-        }
-
-        compilerArgument {
-            name = "Werror"
-            description = "Report an error if there are any warnings.".asReleaseDependent()
-
-            valueType = BooleanType(
-                isNullable = false.asReleaseDependent(),
-                defaultValue = false.asReleaseDependent()
-            )
-
-            lifecycle(
-                introducedVersion = KotlinReleaseVersion.v1_9_20
-            )
-        }
-
-        subLevel("commonCompilerArguments", mergeWith = setOf(deprecatedCommonArgs)) {
-
-            compilerArgument {
-                name = "language-version"
-                description = "Provide source compatibility with the specified version of Kotlin.".asReleaseDependent()
-
-                valueType = KotlinVersionType()
-                valueDescription = "<version>".asReleaseDependent()
-
-                lifecycle(
-                    introducedVersion = KotlinReleaseVersion.v1_9_20
-                )
-            }
-
-            compilerArgument {
-                name = "api-version"
-                description = "Allow using declarations from only the specified version of bundled libraries.".asReleaseDependent()
-
-                valueType = KotlinVersionType()
-                valueDescription = "<version>".asReleaseDependent()
-
-                lifecycle(
-                    introducedVersion = KotlinReleaseVersion.v1_4_0
-                )
-            }
-
-            subLevel("jvmCompilerArguments") {
-                compilerArgument {
-                    name = "jvm-target"
-                    description = "Target version of the generated JVM bytecode (1.6 or 1.8).".asReleaseDependent()
-
-                    valueType = KotlinJvmTargetType()
-                    valueDescription = "<version>".asReleaseDependent()
-
-                    lifecycle(
-                        introducedVersion = KotlinReleaseVersion.v1_4_0
-                    )
-                }
-            }
+    topLevel(Levels.commonToolArguments, mergeWith = setOf(actualCommonToolsArguments)) {
+        subLevel(Levels.commonCompilerArguments, mergeWith = setOf(actualCommonCompilerArguments, deprecatedCommonArgs)) {
+            subLevel(Levels.jvmCompilerArguments, mergeWith = setOf(actualJvmCompilerArguments)) {}
         }
     }
 }
