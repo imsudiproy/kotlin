@@ -56,10 +56,12 @@ class IdSignatureRenderer private constructor(private val showDescriptionForPubl
     }
 
     private fun StringBuilder.render(signature: IdSignature.LocalFakeOverrideSignature): StringBuilder = with(signature) {
-        append("(F/O) ")
+        append("F/O[")
         append(if (showDescriptionForPublicSignatures) signature.description ?: id else id)
         append('[').append(mask.toString(2)).append(']')
-        append(" in class ").append(containingClass)
+        append(" in ")
+        append(containingClass)
+        append("]")
     }
 
     private fun StringBuilder.render(signature: IdSignature.SpecialFakeOverrideSignature): StringBuilder =
