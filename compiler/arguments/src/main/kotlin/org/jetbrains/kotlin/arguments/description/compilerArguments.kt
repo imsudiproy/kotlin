@@ -49,6 +49,13 @@ val kotlinCompilerArguments = compilerArguments {
     topLevel(Levels.commonToolArguments, mergeWith = setOf(actualCommonToolsArguments)) {
         subLevel(Levels.commonCompilerArguments, mergeWith = setOf(actualCommonCompilerArguments, deprecatedCommonArgs)) {
             subLevel(Levels.jvmCompilerArguments, mergeWith = setOf(actualJvmCompilerArguments)) {}
+            subLevel(Levels.commonKlibBasedArguments, mergeWith = setOf(actualCommonKlibBasedArguments)) {
+                subLevel(Levels.wasmArguments, mergeWith = setOf(actualWasmArguments)) {
+                    subLevel(Levels.jsArguments, mergeWith = setOf(actualJsArguments)) {}
+                }
+                subLevel(Levels.nativeArguments, mergeWith = setOf(actualNativeArguments)) {}
+            }
+            subLevel(Levels.metadataArguments, mergeWith = setOf(actualMetadataArguments)) {}
         }
     }
 }
