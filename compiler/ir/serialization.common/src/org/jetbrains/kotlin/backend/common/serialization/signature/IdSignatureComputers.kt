@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
+// TODO try to pass settings here; not, this is bad
 class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignatureComputer {
 
     private val publicSignatureBuilder = PublicIdSigBuilder()
@@ -27,11 +28,13 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
         return publicSignatureBuilder.buildSignature(declaration)
     }
 
+    // TODO pass an additional flag here
     fun computePublicIdSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature {
         assert(mangler.run { declaration.isExported(compatibleMode) }) {
             "${declaration.render()} expected to be exported"
         }
 
+        // TODO
         return publicSignatureBuilder.buildSignature(declaration)
     }
 
@@ -183,7 +186,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
 
 class FileLocalIdSignatureComputer(
     val mangler: KotlinMangler.IrMangler,
-    private val signatureByDeclaration: (declaration: IrDeclaration, compatibleMode: Boolean) -> IdSignature,
+    private val signatureByDeclaration: (declaration: IrDeclaration, compatibleMode: Boolean, reuseExistingSignaturesForSymbols: Boolean) -> IdSignature,
 ) {
     private var localIndex: Long = START_INDEX.toLong()
     private var scopeIndex: Int = START_INDEX
@@ -191,7 +194,9 @@ class FileLocalIdSignatureComputer(
     private fun computeContainerIdSignature(
         declaration: IrDeclaration,
         compatibleMode: Boolean,
+        reuseExistingSignaturesForSymbols: Boolean,
     ): IdSignature {
+        // TODO check setting and get signature fi available
         val correspondingPropertySymbol: IrPropertySymbol? = when (declaration) {
             is IrSimpleFunction -> declaration.correspondingPropertySymbol
             is IrField -> declaration.correspondingPropertySymbol
@@ -199,7 +204,7 @@ class FileLocalIdSignatureComputer(
         }
 
         if (correspondingPropertySymbol != null)
-            return signatureByDeclaration(correspondingPropertySymbol.owner, compatibleMode)
+            return signatureByDeclaration(correspondingPropertySymbol.owner, compatibleMode, reuseExistingSignaturesForSymbols)
 
         return when (val container = declaration.parent) {
             is IrPackageFragment -> IdSignature.CommonSignature(
@@ -209,18 +214,22 @@ class FileLocalIdSignatureComputer(
                 mask = 0,
                 description = null,
             )
-            is IrDeclaration -> signatureByDeclaration(container, compatibleMode)
+            is IrDeclaration -> signatureByDeclaration(container, compatibleMode, reuseExistingSignaturesForSymbols)
             else -> error("Unexpected container ${container.render()}")
         }
     }
 
-    fun computeFileLocalIdSignature(declaration: IrDeclaration, compatibleMode: Boolean): IdSignature = when (declaration) {
+    fun computeFileLocalIdSignature(
+        declaration: IrDeclaration,
+        compatibleMode: Boolean,
+        reuseExistingSignaturesForSymbols: Boolean,
+    ): IdSignature = when (declaration) {
         is IrValueDeclaration -> generateScopeLocalSignature(declaration.name.asString())
         is IrAnonymousInitializer -> generateScopeLocalSignature("ANON INIT")
         is IrLocalDelegatedProperty -> generateScopeLocalSignature(declaration.name.asString())
 
         is IrSimpleFunction -> IdSignature.FileLocalSignature(
-            container = computeContainerIdSignature(declaration, compatibleMode),
+            container = computeContainerIdSignature(declaration, compatibleMode, reuseExistingSignaturesForSymbols),
             id = if (declaration.isFakeOverride) {
                 declaration.stableIndexForFakeOverride(compatibleMode)
             } else {
@@ -230,7 +239,7 @@ class FileLocalIdSignatureComputer(
         )
 
         is IrProperty -> IdSignature.FileLocalSignature(
-            container = computeContainerIdSignature(declaration, compatibleMode),
+            container = computeContainerIdSignature(declaration, compatibleMode, reuseExistingSignaturesForSymbols),
             id = if (declaration.isFakeOverride) {
                 declaration.stableIndexForFakeOverride(compatibleMode)
             } else {
@@ -240,7 +249,7 @@ class FileLocalIdSignatureComputer(
         )
 
         else -> IdSignature.FileLocalSignature(
-            container = computeContainerIdSignature(declaration, compatibleMode),
+            container = computeContainerIdSignature(declaration, compatibleMode, reuseExistingSignaturesForSymbols),
             id = ++localIndex,
             description = declaration.render()
         )
