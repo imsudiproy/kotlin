@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.arguments
 
-import KotlinArgumentsDslMarker
+import org.jetbrains.kotlin.arguments.dsl.KotlinArgumentsDslMarker
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.types.KotlinArgumentValueType
 import kotlin.properties.ReadOnlyProperty
