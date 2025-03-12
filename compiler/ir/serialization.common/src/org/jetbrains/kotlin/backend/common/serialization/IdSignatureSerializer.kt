@@ -14,13 +14,15 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.FileSignature as 
 import org.jetbrains.kotlin.backend.common.serialization.proto.IdSignature as ProtoIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.LocalSignature as ProtoLocalSignature
 import org.jetbrains.kotlin.ir.util.IdSignature
+import org.jetbrains.kotlin.ir.util.render
 import java.util.ArrayList
 
 class IdSignatureSerializer(
     private val serializeString: (String) -> Int,
     private val serializeDebugInfo: (String) -> Int,
     private val protoIdSignatureMap: MutableMap<IdSignature, Int>,
-    private val protoIdSignatureArray: ArrayList<ProtoIdSignature>
+    private val protoIdSignatureArray: ArrayList<ProtoIdSignature>,
+    private val abiCompatibilityLevel: KlibAbiCompatibilityLevel?,
 ) {
 
     private fun serializeFqName(fqName: String): List<Int> = fqName.split(".").map { serializeString(it) }
@@ -113,7 +115,14 @@ class IdSignatureSerializer(
             is IdSignature.CompositeSignature -> proto.compositeSig = serializeCompositeSignature(idSignature)
             is IdSignature.LocalSignature -> proto.localSig = serializeLocalSignature(idSignature)
             is IdSignature.FileSignature -> proto.fileSig = serializeFileSignature(idSignature)
-            is IdSignature.LocalFakeOverrideSignature -> proto.fakeOverrideSig = serializeLocalFakeOverrideSignature(idSignature)
+            is IdSignature.LocalFakeOverrideSignature -> {
+                if (abiCompatibilityLevel != null) {
+                    require(abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_2)) {
+                        "LocalFakeOverrideSignature serialization is not supported at ABI compatibility level $abiCompatibilityLevel"
+                    }
+                }
+                proto.fakeOverrideSig = serializeLocalFakeOverrideSignature(idSignature)
+            }
             is IdSignature.SpecialFakeOverrideSignature -> {}
             is IdSignature.LoweredDeclarationSignature -> error("LoweredDeclarationSignature is not expected here")
         }

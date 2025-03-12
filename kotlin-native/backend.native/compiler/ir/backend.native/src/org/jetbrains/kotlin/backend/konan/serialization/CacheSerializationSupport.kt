@@ -518,7 +518,8 @@ internal object ClassFieldsSerializer {
                 ::serializeString,
                 ::serializeString,
                 protoIdSignatureMap,
-                protoIdSignatureArray
+                protoIdSignatureArray,
+                null,
         )
 
         classFields.forEach {
