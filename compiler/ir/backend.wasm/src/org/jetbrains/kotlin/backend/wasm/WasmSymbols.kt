@@ -57,7 +57,8 @@ class WasmSymbols(
         val kClassImpl: IrClassSymbol = getInternalClass("KClassImpl")
         val kClassInterfaceImpl: IrClassSymbol = getInternalClass("KClassInterfaceImpl")
         val isSupportedInterface = getInternalFunction("isSupportedInterface")
-        val getInterfaceSlot = getInternalFunction("getInterfaceSlot")
+        val getInterfaceVTable = getInternalFunction("getInterfaceVTable")
+        val getInterfaceVTableBodyImpl = getInternalFunction("getInterfaceVTableBodyImpl")
     }
 
     internal val reflectionSymbols: WasmReflectionSymbols = WasmReflectionSymbols()
@@ -242,11 +243,11 @@ class WasmSymbols(
     val wasmTypeId = getInternalFunction("wasmTypeId")
     val wasmGetTypeRtti = getInternalFunction("wasmGetTypeRtti")
     val wasmGetRttiSupportedInterfaces = getInternalFunction("wasmGetRttiSupportedInterfaces")
-    val wasmGetRttiSupportedInterfacesNotNull = getInternalFunction("wasmGetRttiSupportedInterfacesNotNull")
     val wasmGetRttiIntField = getInternalFunction("wasmGetRttiIntField")
     val wasmGetRttiLongField = getInternalFunction("wasmGetRttiLongField")
     val wasmGetRttiSuperClass = getInternalFunction("wasmGetRttiSuperClass")
     val wasmGetObjectRtti = getInternalFunction("wasmGetObjectRtti")
+    val wasmArrayAnyIndexOfValue = getInternalFunction("wasmArrayAnyIndexOfValue")
 
     val wasmIsInterface = getInternalFunction("wasmIsInterface")
 

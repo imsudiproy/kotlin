@@ -21,7 +21,7 @@ internal class WasmLongImmutableArray(size: Int) {
         implementedAsIntrinsic
 }
 
-internal fun indexOfValue(array: WasmLongImmutableArray, value: Long): Int {
+internal fun wasmArrayAnyIndexOfValue(array: WasmLongImmutableArray, value: Long): Int {
     val arraySize = array.len()
     var index = 0
     while (index < arraySize) {
@@ -36,11 +36,16 @@ internal fun indexOfValue(array: WasmLongImmutableArray, value: Long): Int {
 
 internal fun isSupportedInterface(obj: Any, interfaceId: Long): Boolean {
     val interfaceArray = wasmGetRttiSupportedInterfaces(obj) ?: return false
-    return indexOfValue(interfaceArray, interfaceId) != -1
+    return wasmArrayAnyIndexOfValue(interfaceArray, interfaceId) != -1
 }
 
-internal fun getInterfaceSlot(obj: Any, interfaceId: Long): Int =
-    indexOfValue(wasmGetRttiSupportedInterfacesNotNull(obj), interfaceId)
+internal fun getInterfaceVTable(obj: Any, interfaceId: Long): kotlin.wasm.internal.reftypes.anyref =
+    getInterfaceVTableBodyImpl()
+
+@Suppress("UNUSED_PARAMETER")
+@ExcludedFromCodegen
+internal fun getInterfaceVTableBodyImpl(): kotlin.wasm.internal.reftypes.anyref =
+    implementedAsIntrinsic
 
 internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteral(
     startAddress = wasmGetRttiIntField(2, rtti),
@@ -77,11 +82,6 @@ internal fun wasmGetObjectRtti(obj: Any): kotlin.wasm.internal.reftypes.structre
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
 internal fun wasmGetRttiSupportedInterfaces(obj: Any): WasmLongImmutableArray? =
-    implementedAsIntrinsic
-
-@Suppress("UNUSED_PARAMETER")
-@ExcludedFromCodegen
-internal fun wasmGetRttiSupportedInterfacesNotNull(obj: Any): WasmLongImmutableArray =
     implementedAsIntrinsic
 
 @Suppress("UNUSED_PARAMETER")

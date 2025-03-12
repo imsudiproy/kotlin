@@ -758,19 +758,8 @@ class BodyGenerator(
                     body.buildRefCastStatic(functionTypeReference, location)
                 } else {
                     body.commentGroupStart { "Interface call: ${function.fqNameWhenAvailable}" }
-                    body.buildStructGet(
-                        wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass),
-                        anyToITableId,
-                        SourceLocation.NoLocation
-                    )
-                    generateExpression(call.dispatchReceiver!!)
                     body.buildConstI64(wasmFileCodegenContext.referenceTypeId(klassSymbol), location)
-                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceSlot), location)
-                    body.buildInstr(
-                        WasmOp.ARRAY_GET,
-                        location,
-                        WasmImmediate.TypeIdx(wasmFileCodegenContext.interfaceTableTypes.wasmAnyArrayType)
-                    )
+                    body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.reflectionSymbols.getInterfaceVTable), location)
                     body.buildRefCastStatic(vTableGcTypeReference, location)
                     val vfSlot = wasmModuleMetadataCache.getInterfaceMetadata(klass.symbol).methods
                         .indexOfFirst { it.function == function }
@@ -876,7 +865,7 @@ class BodyGenerator(
                 body.buildGetGlobal(wasmFileCodegenContext.referenceRttiGlobal(klass.symbol), location)
             }
 
-            wasmSymbols.wasmGetRttiSupportedInterfaces, wasmSymbols.wasmGetRttiSupportedInterfacesNotNull -> {
+            wasmSymbols.wasmGetRttiSupportedInterfaces -> {
                 body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), anyToRttiId, location)
                 body.buildStructGet(wasmFileCodegenContext.rttiType, rttiToSupportedIFacesId, location)
             }
@@ -884,6 +873,26 @@ class BodyGenerator(
             wasmSymbols.wasmGetRttiSuperClass -> {
                 body.buildRefCastStatic(wasmFileCodegenContext.rttiType, location)
                 body.buildStructGet(wasmFileCodegenContext.rttiType, rttiToSuperTypeId, location)
+            }
+
+            wasmSymbols.reflectionSymbols.getInterfaceVTableBodyImpl -> {
+                //This is implementation of getInterfaceVTable, so argument locals could be used from the call-site
+                //obj.interfacesArray
+                body.buildGetLocal(functionContext.referenceLocal(0), location) //obj
+                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), anyToITableId, location)
+
+                //wasmArrayAnyIndexOfValue(obj.rtti.interfaceIds)
+                body.buildGetLocal(functionContext.referenceLocal(0), location) //obj
+                body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), anyToRttiId, location)
+                body.buildStructGet(wasmFileCodegenContext.rttiType, rttiToSupportedIFacesId, location)
+                body.buildGetLocal(functionContext.referenceLocal(1), location) //interfaceId
+                body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.wasmArrayAnyIndexOfValue), location)
+
+                body.buildInstr(
+                    WasmOp.ARRAY_GET,
+                    location,
+                    WasmImmediate.TypeIdx(wasmFileCodegenContext.interfaceTableTypes.wasmAnyArrayType)
+                )
             }
 
             wasmSymbols.wasmGetObjectRtti -> {
