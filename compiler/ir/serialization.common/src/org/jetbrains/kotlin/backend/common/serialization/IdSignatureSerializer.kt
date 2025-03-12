@@ -80,7 +80,7 @@ class IdSignatureSerializer(
         val proto = ProtoLocalFakeOverrideSignature.newBuilder()
         proto.containerClass = protoIdSignature(signature.containingClass)
 
-        proto.memberUniqId = signature.id
+        proto.hash = signature.id
         if (signature.mask != 0L) {
             proto.flags = signature.mask
         }

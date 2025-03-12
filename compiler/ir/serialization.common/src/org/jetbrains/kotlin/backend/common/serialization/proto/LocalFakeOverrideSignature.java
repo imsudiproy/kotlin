@@ -60,7 +60,7 @@ public final class LocalFakeOverrideSignature extends
           }
           case 16: {
             bitField0_ |= 0x00000002;
-            memberUniqId_ = input.readInt64();
+            hash_ = input.readInt64();
             break;
           }
           case 24: {
@@ -122,19 +122,19 @@ public final class LocalFakeOverrideSignature extends
     return containerClass_;
   }
 
-  public static final int MEMBER_UNIQ_ID_FIELD_NUMBER = 2;
-  private long memberUniqId_;
+  public static final int HASH_FIELD_NUMBER = 2;
+  private long hash_;
   /**
-   * <code>required int64 member_uniq_id = 2;</code>
+   * <code>required int64 hash = 2;</code>
    */
-  public boolean hasMemberUniqId() {
+  public boolean hasHash() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required int64 member_uniq_id = 2;</code>
+   * <code>required int64 hash = 2;</code>
    */
-  public long getMemberUniqId() {
-    return memberUniqId_;
+  public long getHash() {
+    return hash_;
   }
 
   public static final int FLAGS_FIELD_NUMBER = 3;
@@ -169,7 +169,7 @@ public final class LocalFakeOverrideSignature extends
 
   private void initFields() {
     containerClass_ = 0;
-    memberUniqId_ = 0L;
+    hash_ = 0L;
     flags_ = 0L;
     debugInfo_ = 0;
   }
@@ -183,7 +183,7 @@ public final class LocalFakeOverrideSignature extends
       memoizedIsInitialized = 0;
       return false;
     }
-    if (!hasMemberUniqId()) {
+    if (!hasHash()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -198,7 +198,7 @@ public final class LocalFakeOverrideSignature extends
       output.writeInt32(1, containerClass_);
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
-      output.writeInt64(2, memberUniqId_);
+      output.writeInt64(2, hash_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       output.writeInt64(3, flags_);
@@ -221,7 +221,7 @@ public final class LocalFakeOverrideSignature extends
     }
     if (((bitField0_ & 0x00000002) == 0x00000002)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
-        .computeInt64Size(2, memberUniqId_);
+        .computeInt64Size(2, hash_);
     }
     if (((bitField0_ & 0x00000004) == 0x00000004)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -327,7 +327,7 @@ public final class LocalFakeOverrideSignature extends
       super.clear();
       containerClass_ = 0;
       bitField0_ = (bitField0_ & ~0x00000001);
-      memberUniqId_ = 0L;
+      hash_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000002);
       flags_ = 0L;
       bitField0_ = (bitField0_ & ~0x00000004);
@@ -363,7 +363,7 @@ public final class LocalFakeOverrideSignature extends
       if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
         to_bitField0_ |= 0x00000002;
       }
-      result.memberUniqId_ = memberUniqId_;
+      result.hash_ = hash_;
       if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
         to_bitField0_ |= 0x00000004;
       }
@@ -381,8 +381,8 @@ public final class LocalFakeOverrideSignature extends
       if (other.hasContainerClass()) {
         setContainerClass(other.getContainerClass());
       }
-      if (other.hasMemberUniqId()) {
-        setMemberUniqId(other.getMemberUniqId());
+      if (other.hasHash()) {
+        setHash(other.getHash());
       }
       if (other.hasFlags()) {
         setFlags(other.getFlags());
@@ -400,7 +400,7 @@ public final class LocalFakeOverrideSignature extends
         
         return false;
       }
-      if (!hasMemberUniqId()) {
+      if (!hasHash()) {
         
         return false;
       }
@@ -458,34 +458,34 @@ public final class LocalFakeOverrideSignature extends
       return this;
     }
 
-    private long memberUniqId_ ;
+    private long hash_ ;
     /**
-     * <code>required int64 member_uniq_id = 2;</code>
+     * <code>required int64 hash = 2;</code>
      */
-    public boolean hasMemberUniqId() {
+    public boolean hasHash() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required int64 member_uniq_id = 2;</code>
+     * <code>required int64 hash = 2;</code>
      */
-    public long getMemberUniqId() {
-      return memberUniqId_;
+    public long getHash() {
+      return hash_;
     }
     /**
-     * <code>required int64 member_uniq_id = 2;</code>
+     * <code>required int64 hash = 2;</code>
      */
-    public Builder setMemberUniqId(long value) {
+    public Builder setHash(long value) {
       bitField0_ |= 0x00000002;
-      memberUniqId_ = value;
+      hash_ = value;
       
       return this;
     }
     /**
-     * <code>required int64 member_uniq_id = 2;</code>
+     * <code>required int64 hash = 2;</code>
      */
-    public Builder clearMemberUniqId() {
+    public Builder clearHash() {
       bitField0_ = (bitField0_ & ~0x00000002);
-      memberUniqId_ = 0L;
+      hash_ = 0L;
       
       return this;
     }

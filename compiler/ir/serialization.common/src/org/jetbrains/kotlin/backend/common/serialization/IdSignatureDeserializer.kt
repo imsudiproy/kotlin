@@ -88,9 +88,9 @@ class IdSignatureDeserializer(
 
     private fun deserializeLocalFakeOverrideSignature(proto: ProtoLocalFakeOverrideSignature): IdSignature.LocalFakeOverrideSignature {
         val containerClass = deserializeIdSignature(proto.containerClass)
-        val memberId = proto.memberUniqId
+        val id = proto.hash
         val description = if (proto.hasDebugInfo()) libraryFile.debugInfo(proto.debugInfo)?.let(irInterner::string) else null
-        return IdSignature.LocalFakeOverrideSignature(containerClass, memberId, proto.flags, description)
+        return IdSignature.LocalFakeOverrideSignature(containerClass, id, proto.flags, description)
     }
 
     private fun deserializeLocalIdSignature(proto: ProtoLocalSignature): IdSignature.LocalSignature {

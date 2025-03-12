@@ -46,7 +46,7 @@ message AccessorIdSignature {
 
 message LocalFakeOverrideSignature {
   required int32 container_class = 1;
-  required int64 member_uniq_id = 2;
+  required int64 hash = 2;
   optional int64 flags = 3 [default = 0];
   optional int32 debug_info = 4;
 }

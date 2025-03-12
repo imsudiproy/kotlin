@@ -17,13 +17,13 @@ public interface LocalFakeOverrideSignatureOrBuilder extends
   int getContainerClass();
 
   /**
-   * <code>required int64 member_uniq_id = 2;</code>
+   * <code>required int64 hash = 2;</code>
    */
-  boolean hasMemberUniqId();
+  boolean hasHash();
   /**
-   * <code>required int64 member_uniq_id = 2;</code>
+   * <code>required int64 hash = 2;</code>
    */
-  long getMemberUniqId();
+  long getHash();
 
   /**
    * <code>optional int64 flags = 3 [default = 0];</code>
