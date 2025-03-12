@@ -493,8 +493,8 @@ sealed class IdSignature {
     /**
      * Used to represent fake override member of a local class (starting from kotlin 2.2.0).
      *
-     * It is similar to [CommonSignature], the difference is that instead of an FQ name, that would include a name the containing class,
-     * it has an [IdSignature] of that class. Also, unline [CommonSignature], the [id] is composed solely out of this declaration
+     * It is similar to [CommonSignature], the difference is that instead of an FQ name, that would include a name of the containing class,
+     * it has an [IdSignature] of that class. Also, unlike [CommonSignature], the [id] is composed solely out of this declaration
      * (such as its name and parameters), an _not_ out of its parent(s). That simplifies "moving" an FO member from one class to another
      * (in the case of inlining) by just replacing the [containingClass] field. It is therefore more similar to JVM signatures.
      *
