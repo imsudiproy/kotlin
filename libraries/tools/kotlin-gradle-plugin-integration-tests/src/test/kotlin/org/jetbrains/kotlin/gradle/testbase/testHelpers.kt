@@ -42,14 +42,17 @@ fun TestProject.makeSnapshotTo(
 
     val dest = Paths
         .get(destinationPath)
-        .resolve(projectName)
-        .resolve(gradleVersion.version)
-        .also {
-            if (it.exists()) it.deleteRecursively()
-            it.createDirectories()
-        }
+        .resolve(projectName + "-" + gradleVersion.version)
 
-    projectPath.copyRecursively(dest)
+    if (dest.exists()) {
+        dest.deleteRecursively()
+    }
+
+    projectPath.copyToRecursively(
+        dest.createDirectories(),
+        overwrite = false,
+        followLinks = true,
+    )
 
     val gradlePropertiesFile = dest.resolve("gradle.properties")
     val gradlePropertiesFromBuildOptions = buildOptions.asGradleProperties(gradleVersion).toMutableMap()
