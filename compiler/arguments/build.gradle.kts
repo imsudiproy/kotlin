@@ -8,6 +8,7 @@ plugins {
 dependencies {
     api(kotlinStdlib())
     api(libs.kotlinx.serialization.json)
+    api(project(":compiler:arguments.common"))
 }
 
 application {
