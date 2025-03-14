@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -32,10 +32,22 @@ object ClsClassFinder {
     }
 
     /**
+     * The method is needed only for backward binary compatibility with Kotlin code
+     */
+    @JvmOverloads
+    fun isKotlinInternalCompiledFile(
+        file: VirtualFile,
+        fileContent: ByteArray? = null,
+    ): Boolean = isKotlinInternalCompiledFile(
+        file = file,
+        fileContent = fileContent,
+        multifileClassPartKindStrategy = MultifileClassPartKindStrategy.FROM_STACK,
+    )
+
+    /**
      * Checks if this file is a compiled "internal" Kotlin class, i.e. a Kotlin class (not necessarily ABI-compatible with the current plugin)
      * which should NOT be decompiled (and, as a result, shown under the library in the Project view, be searchable via Find class, etc.)
      */
-    @JvmOverloads
     fun isKotlinInternalCompiledFile(
         file: VirtualFile,
         fileContent: ByteArray? = null,
