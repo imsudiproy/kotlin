@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.services.sourceProviders
 
-import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -16,10 +15,12 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
+import java.net.URI
+import java.nio.file.FileSystems
 
 class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
-        private val HELPERS_PATH = (System.getProperty(":compiler:testData/ir") ?: "./compiler/testData/ir") + "/interpreter/helpers"
+        private val HELPERS_PATH = "ir/interpreter/helpers"
         private val STDLIB_PATH = (System.getProperty("stdlib.path") ?: "./libraries/stdlib")
         private val UNSIGNED_PATH = arrayOf(
             "$STDLIB_PATH/unsigned/src/kotlin",
@@ -74,11 +75,32 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
         return getTestFilesForEachDirectory(
-            HELPERS_PATH,
             *UNSIGNED_PATH,
             *RUNTIME_PATHS,
             *ANNOTATIONS_PATHS,
             REFLECT_PATH
-        )
+        ) + this::class.java.classLoader.getResource(HELPERS_PATH)!!.let {
+            val resourceUri = it.toURI()
+            when (resourceUri.scheme) {
+                "jar" -> handleJarFileSystem(resourceUri)
+                "file" -> handleFileSystem(resourceUri)
+                else -> throw UnsupportedOperationException("Unsupported URI scheme: ${resourceUri.scheme}")
+            }
+
+        }
+    }
+
+    private fun handleFileSystem(resourceUri: URI): List<TestFile> {
+        return File(resourceUri).walkTopDown()
+            .mapNotNull { file -> file.takeIf { it.isFile }?.toTestFile() }
+            .toList()
+    }
+
+    private fun handleJarFileSystem(resourceUri: URI): List<TestFile> {
+        val array = resourceUri.toString().split("!")
+        val fs = FileSystems.newFileSystem(URI.create(array[0]), emptyMap<String, String>())
+        return fs.getPath(array[1]).toFile().walkTopDown()
+            .mapNotNull { file -> file.toTestFile() }
+            .toList()
     }
 }
