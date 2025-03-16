@@ -188,7 +188,7 @@ public class KtTestUtil {
     }
 
     public static File findMockJdkRtJar() {
-        String property = System.getProperty("org.jetbrains.kotlin.test.mockJdkRuntime");
+        String property = System.getProperty("kotlin.mockJDK.runtime.path");
         if (property!= null) {
             return new File(property);
         } else {

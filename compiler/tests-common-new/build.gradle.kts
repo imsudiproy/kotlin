@@ -70,6 +70,7 @@ compilerTests {
     withScriptingPlugin()
     withStdlibJsRuntime()
     withTestJsRuntime()
+    withMockJdkRuntime()
 }
 
 projectTest(
@@ -83,11 +84,6 @@ projectTest(
 ) {
     //workingDir = rootDir
     useJUnitPlatform()
-    inputs.file(File(rootDir, "compiler/testData/mockJDK/jre/lib/rt.jar")).withNormalizer(ClasspathNormalizer::class)
-    systemProperty(
-        "org.jetbrains.kotlin.test.mockJdkRuntime",
-        File(rootDir, "compiler/testData/mockJDK/jre/lib/rt.jar").absolutePath
-    )
     inputs.file(File(rootDir, "compiler/testData/mockJDKModified/rt.jar")).withNormalizer(ClasspathNormalizer::class)
     systemProperty(
         "org.jetbrains.kotlin.test.mockJDKModifiedRuntime",

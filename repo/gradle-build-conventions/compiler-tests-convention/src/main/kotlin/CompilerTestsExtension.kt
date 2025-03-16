@@ -7,16 +7,13 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
-import org.gradle.api.file.*
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.project.IsolatedProject
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.project
+import java.io.File
 
 abstract class CompilerTestsExtension(private val project: Project) {
     abstract val allowFlaky: Property<Boolean>
@@ -67,6 +64,8 @@ abstract class CompilerTestsExtension(private val project: Project) {
         }
     }
 
+    abstract val mockJdkRuntime: RegularFileProperty
+
     internal abstract val testData: ConfigurableFileCollection
     fun testData(relativePath: String) {
         testData.from(project.layout.projectDirectory.dir(relativePath).asFileTree.matching {
@@ -74,11 +73,11 @@ abstract class CompilerTestsExtension(private val project: Project) {
         })
     }
 
-    data class TestData(@get:Input val key: String, @get:InputDirectory @get:PathSensitive(PathSensitivity.RELATIVE) val directory: Directory)
+    internal val testDataMap: MutableMap<String, String> = mutableMapOf<String, String>()
 
-    internal abstract val testDataDirs: ListProperty<TestData>
     fun testData(isolatedProject: IsolatedProject, relativePath: String) {
-        testDataDirs.add(TestData(isolatedProject.path + ":" + relativePath, isolatedProject.projectDirectory.dir(relativePath)))
+        val testDataDirectory = isolatedProject.projectDirectory.dir(relativePath).asFile
+        testDataMap.put(testDataDirectory.relativeTo(project.rootDir).path, testDataDirectory.relativeTo(project.projectDir).path)
     }
 
     fun withStdlibCommon() {
@@ -116,5 +115,9 @@ abstract class CompilerTestsExtension(private val project: Project) {
         KOTLIN_SCRIPTING_COMMON_JAR
         KOTLIN_SCRIPTING_JVM_JAR
         */
+    }
+
+    fun withMockJdkRuntime() {
+        mockJdkRuntime.value { File(project.rootDir, "compiler/testData/mockJDK/jre/lib/rt.jar") }
     }
 }

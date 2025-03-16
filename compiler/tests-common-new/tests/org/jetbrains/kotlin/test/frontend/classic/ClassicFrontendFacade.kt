@@ -135,9 +135,9 @@ class ClassicFrontendFacade(
     ) {
         if (JvmEnvironmentConfigurationDirectives.USE_JAVAC !in module.directives) return
         val mockJdk = runIf(JvmEnvironmentConfigurationDirectives.FULL_JDK !in module.directives) {
-            System.getProperty("org.jetbrains.kotlin.test.mockJdkRuntime")?.let { File(it) } ?: File(
+            System.getProperty("kotlin.mockJDK.runtime.path")?.let { File(it) } ?: File(
                 KtTestUtil.getHomeDirectory(),
-                "compiler/testData/mockJDK/jre/lib/rt2.jar"
+                "compiler/testData/mockJDK/jre/lib/rt.jar"
             )
         }
         testServices.compilerConfigurationProvider.registerJavacForModule(module, ktFiles, mockJdk)
