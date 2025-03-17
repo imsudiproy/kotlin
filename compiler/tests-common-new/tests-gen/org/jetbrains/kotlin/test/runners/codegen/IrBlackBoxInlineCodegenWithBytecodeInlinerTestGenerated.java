@@ -6674,6 +6674,12 @@ public class IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated extends Abs
         public void testUsePrivateConstValFromInternalInline() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateConstValFromInternalInline.kt");
         }
+
+        @Test
+        @TestMetadata("usePrivateVarFromLocalClassInsideInternalInlineFun.kt")
+        public void testUsePrivateVarFromLocalClassInsideInternalInlineFun() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/usePrivateVarFromLocalClassInsideInternalInlineFun.kt");
+        }
       }
 
       @Nested
