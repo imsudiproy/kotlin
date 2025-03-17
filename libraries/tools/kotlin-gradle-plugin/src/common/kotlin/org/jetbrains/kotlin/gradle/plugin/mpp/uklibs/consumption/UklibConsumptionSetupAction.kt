@@ -24,9 +24,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages.KOTLIN_UKLIB_METADATA
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragmentPlatformAttribute
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
-import org.jetbrains.kotlin.gradle.utils.setAttribute
 
 internal val UklibConsumptionSetupAction = KotlinProjectSetupAction {
     when (project.kotlinPropertiesProvider.kmpResolutionStrategy) {
@@ -72,12 +69,12 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
 
         dependencies.registerTransform(UnzippedUklibToPlatformCompilationTransform::class.java) {
             with(it.from) {
-                setAttribute(uklibStateAttribute, uklibStateDecompressed)
-                setAttribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
+                attribute(uklibStateAttribute, uklibStateDecompressed)
+                attribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
             }
             with(it.to) {
-                setAttribute(uklibStateAttribute, uklibStateDecompressed)
-                setAttribute(uklibViewAttribute, uklibFragmentPlatformAttribute)
+                attribute(uklibStateAttribute, uklibStateDecompressed)
+                attribute(uklibViewAttribute, uklibFragmentPlatformAttribute)
             }
 
             it.parameters.targetFragmentAttribute.set(uklibFragmentPlatformAttribute)
@@ -99,11 +96,11 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
              * to 1 using Usage, the disambiguation phase ends which is what we want in [SelectBestMatchingVariantForKmpResolutionUsage].
              */
             with(it.internal.configurations.compileDependencyConfiguration.attributes) {
-                setAttribute(USAGE_ATTRIBUTE, usageByName(KOTLIN_UKLIB_API))
+                attribute(USAGE_ATTRIBUTE, usageByName(KOTLIN_UKLIB_API))
             }
             it.internal.configurations.runtimeDependencyConfiguration?.attributes?.let {
                 with(it) {
-                    setAttribute(USAGE_ATTRIBUTE, usageByName(KOTLIN_UKLIB_RUNTIME))
+                    attribute(USAGE_ATTRIBUTE, usageByName(KOTLIN_UKLIB_RUNTIME))
                 }
             }
 
@@ -112,10 +109,10 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
                 it.internal.configurations.runtimeDependencyConfiguration,
             ).forEach {
                 with(it.attributes) {
-                    setAttribute(uklibStateAttribute, uklibStateDecompressed)
-                    setAttribute(uklibViewAttribute, uklibFragmentPlatformAttribute)
-                    setAttribute(isMetadataJar, notMetadataJar)
-                    setAttribute(isUklib, isUklibTrue)
+                    attribute(uklibStateAttribute, uklibStateDecompressed)
+                    attribute(uklibViewAttribute, uklibFragmentPlatformAttribute)
+                    attribute(isMetadataJar, notMetadataJar)
+                    attribute(isUklib, isUklibTrue)
                 }
             }
         }
@@ -124,15 +121,15 @@ private fun Project.allowPlatformCompilationsToResolvePlatformCompilationArtifac
 
 private fun Project.registerCompressedUklibArtifact() {
     with(dependencies.artifactTypes.create(Uklib.UKLIB_EXTENSION).attributes) {
-        setAttribute(uklibStateAttribute, uklibStateCompressed)
-        setAttribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
+        attribute(uklibStateAttribute, uklibStateCompressed)
+        attribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
     }
 }
 
 private fun Project.allowUklibsToDecompress() {
     dependencies.registerTransform(UnzipUklibTransform::class.java) {
-        it.from.setAttribute(uklibStateAttribute, uklibStateCompressed)
-        it.to.setAttribute(uklibStateAttribute, uklibStateDecompressed)
+        it.from.attribute(uklibStateAttribute, uklibStateCompressed)
+        it.to.attribute(uklibStateAttribute, uklibStateDecompressed)
     }
 }
 
@@ -141,10 +138,10 @@ private fun Project.allowMetadataConfigurationsToResolveUnzippedUklib(
 ) {
     sourceSets.configureEach {
         with(it.internal.resolvableMetadataConfiguration.attributes) {
-            setAttribute(USAGE_ATTRIBUTE, usageByName(KOTLIN_UKLIB_METADATA))
-            setAttribute(uklibStateAttribute, uklibStateDecompressed)
-            setAttribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
-            setAttribute(isUklib, isUklibTrue)
+            attribute(USAGE_ATTRIBUTE, usageByName(KOTLIN_UKLIB_METADATA))
+            attribute(uklibStateAttribute, uklibStateDecompressed)
+            attribute(uklibViewAttribute, uklibViewAttributeWholeUklib)
+            attribute(isUklib, isUklibTrue)
         }
     }
 }
@@ -163,11 +160,11 @@ private fun Project.allowPSMBasedKMPToResolveLenientlyAndSelectBestMatchingVaria
         strategy.compatibilityRules.add(AllowPlatformConfigurationsToFallBackToMetadataForLenientKmpResolution::class.java)
     }
     with(dependencies.artifactTypes.getByName("jar").attributes) {
-        setAttribute(isMetadataJar, isMetadataJarUnknown)
+        attribute(isMetadataJar, isMetadataJarUnknown)
     }
     dependencies.registerTransform(ThrowAwayMetadataJarsTransform::class.java) {
-        it.from.setAttribute(isMetadataJar, isMetadataJarUnknown)
-        it.to.setAttribute(isMetadataJar, notMetadataJar)
+        it.from.attribute(isMetadataJar, isMetadataJarUnknown)
+        it.to.attribute(isMetadataJar, notMetadataJar)
     }
 }
 
