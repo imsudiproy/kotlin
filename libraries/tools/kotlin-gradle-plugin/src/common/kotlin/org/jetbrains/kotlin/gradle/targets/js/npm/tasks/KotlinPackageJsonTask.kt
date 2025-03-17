@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PackageJsonProducerInputs
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.*
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -52,6 +49,7 @@ abstract class KotlinPackageJsonTask :
     @get:Input
     internal abstract val toolsNpmDependencies: ListProperty<String>
 
+    /** Should contain only `package.json` files, but also contains test compilation (we want to fix) */
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles
@@ -142,6 +140,8 @@ abstract class KotlinPackageJsonTask :
                             }
                             .artifacts
                             .artifactFiles
+                            .toSet() // remove task dependencies, add them manually below
+                        // TODO document why task dependencies removed
                     }
                 ).disallowChanges()
 
@@ -160,6 +160,9 @@ abstract class KotlinPackageJsonTask :
                     it.npmResolutionManager.get().isConfiguringState()
                 }
 
+                /**
+                 * Manually add task dependencies for [compositeFiles], for complicated legacy reasons.
+                 */
                 task.dependsOn(
                     target.project.provider {
                         findDependentTasks(
@@ -191,10 +194,18 @@ abstract class KotlinPackageJsonTask :
         private fun findDependentTasks(
             rootResolver: KotlinRootNpmResolver,
             compilationNpmResolution: KotlinCompilationNpmResolution,
-        ): Collection<String> {
-            return compilationNpmResolution.internalDependencies.map { dependency ->
+        ): Collection<Any> {
+            val internalDepsTasks = compilationNpmResolution.internalDependencies.map { dependency ->
                 rootResolver[dependency.projectPath][dependency.compilationName].npmProject.packageJsonTaskPath
             }
+
+            val compoBuildTasks = compilationNpmResolution.internalCompositeDependencies.map { dependency ->
+                dependency.includedBuild?.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME")
+                    ?: error("includedBuild instance is not available from $dependency")
+                dependency.includedBuild.task(":${RootPackageJsonTask.NAME}")
+            }
+
+            return internalDepsTasks + compoBuildTasks
         }
 
         private fun getCompilationResolver(

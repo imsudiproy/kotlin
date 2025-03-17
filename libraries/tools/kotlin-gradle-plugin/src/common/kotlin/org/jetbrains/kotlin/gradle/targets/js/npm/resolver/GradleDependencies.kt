@@ -13,30 +13,37 @@ import java.io.Serializable
 
 data class ExternalGradleDependency(
     val dependency: ResolvedDependency,
-    val artifact: ResolvedArtifact
+    val artifact: ResolvedArtifact,
 ) : Serializable
 
 data class FileCollectionExternalGradleDependency(
     val files: Collection<File>,
-    val dependencyVersion: String?
+    val dependencyVersion: String?,
 ) : Serializable
 
 data class FileExternalGradleDependency(
     val dependencyName: String,
     val dependencyVersion: String,
-    val file: File
+    val file: File,
 ) : Serializable
 
+/**
+ * Used to manually declare task dependencies for
+ * [org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask].
+ */
 data class CompositeDependency(
+    @Deprecated("This property is not used. Scheduled for removal in Kotlin 2.4.")
     val dependencyName: String,
+    @Deprecated("This property is not used. Scheduled for removal in Kotlin 2.4.")
     val dependencyVersion: String,
+    @Deprecated("This property is not used. Scheduled for removal in Kotlin 2.4.")
     val includedBuildDir: File,
     @Transient
-    val includedBuild: IncludedBuild?
+    val includedBuild: IncludedBuild?,
 ) : Serializable
 
 data class InternalDependency(
     val projectPath: String,
     val compilationName: String,
-    val projectName: String
+    val projectName: String,
 ) : Serializable

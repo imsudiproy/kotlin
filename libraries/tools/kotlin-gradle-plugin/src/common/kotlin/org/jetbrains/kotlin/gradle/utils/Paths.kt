@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.util.Path
 
 @Deprecated(
-    "This function is an internal Kotlin Gradle Plugin utility that is no longer used. Scheduled for removal in Kotlin 2.4.",
+    "This function is an internal Kotlin Gradle Plugin utility. Scheduled for removal in Kotlin 2.4.",
 )
-@Suppress("DEPRECATION")
-tailrec fun Path.topRealPath(): Path {
+fun Path.topRealPath(): Path {
+    return parent?.topRealPathInternal() ?: return this
+}
+
+internal tailrec fun Path.topRealPathInternal(): Path {
     val parent = parent
     parent?.parent ?: return this
 
-    return parent.topRealPath()
+    return parent.topRealPathInternal()
 }
