@@ -63,7 +63,7 @@ inline fun <R> withJsIC(args: CommonCompilerArguments, enabled: Boolean = true, 
     IncrementalCompilation.setIsEnabledForJs(true)
 
     try {
-        if (args.incrementalCompilation == null) {
+        if (args.incrementalCompilation != enabled) {
             args.incrementalCompilation = enabled
         }
         return fn()

@@ -92,7 +92,7 @@ inline fun <R> withIncrementalCompilation(args: CommonCompilerArguments, enabled
     IncrementalCompilation.setIsEnabledForJvm(enabled)
 
     try {
-        if (args.incrementalCompilation == null) {
+        if (args.incrementalCompilation != enabled) {
             args.incrementalCompilation = enabled
         }
         return fn()

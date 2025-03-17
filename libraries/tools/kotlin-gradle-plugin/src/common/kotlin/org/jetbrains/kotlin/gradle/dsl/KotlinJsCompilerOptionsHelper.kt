@@ -24,7 +24,7 @@ internal object KotlinJsCompilerOptionsHelper {
         args.sourceMapPrefix = from.sourceMapPrefix.orNull
         args.target = from.target.get()
         args.typedArrays = from.typedArrays.get()
-        args.useEsClasses = from.useEsClasses.orNull
+        args.useEsClasses = from.useEsClasses.get()
     }
 
     internal fun syncOptionsAsConvention(
