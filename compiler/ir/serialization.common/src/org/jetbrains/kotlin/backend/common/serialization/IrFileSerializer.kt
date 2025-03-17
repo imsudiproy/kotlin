@@ -1228,9 +1228,18 @@ open class IrFileSerializer(
             .setBase(serializeIrDeclarationBase(property, PropertyFlags.encode(property)))
             .setName(serializeName(property.name))
 
-        property.backingField?.takeUnless { skipIfPrivate(it) }?.let { proto.backingField = serializeIrField(it) }
-        property.getter?.takeUnless { skipIfPrivate(it) }?.let { proto.getter = serializeIrFunction(it) }
-        property.setter?.takeUnless { skipIfPrivate(it) }?.let { proto.setter = serializeIrFunction(it) }
+        val getter = property.getter
+        val setter = property.setter
+        val backingField = property.backingField
+
+        val shouldSerializeGetter = getter?.let(::skipIfPrivate) == false
+        val shouldSerializeSetter = setter?.let(::skipIfPrivate) == false
+        val shouldSerializeBackingField = backingField != null &&
+                (shouldSerializeGetter || shouldSerializeSetter || !skipIfPrivate(backingField))
+
+        if (shouldSerializeBackingField) proto.backingField = serializeIrField(backingField)
+        if (shouldSerializeGetter) proto.getter = serializeIrFunction(getter)
+        if (shouldSerializeSetter) proto.setter = serializeIrFunction(setter)
 
         return proto.build()
     }
