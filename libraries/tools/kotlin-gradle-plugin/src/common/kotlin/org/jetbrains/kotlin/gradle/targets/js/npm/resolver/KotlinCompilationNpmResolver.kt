@@ -34,7 +34,10 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.*
+import org.jetbrains.kotlin.gradle.utils.createConsumable
+import org.jetbrains.kotlin.gradle.utils.createResolvable
+import org.jetbrains.kotlin.gradle.utils.currentBuild
+import org.jetbrains.kotlin.gradle.utils.topRealPathInternal
 import java.io.Serializable
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
@@ -67,13 +70,15 @@ class KotlinCompilationNpmResolver(
     val packageJsonTaskHolder: TaskProvider<KotlinPackageJsonTask> =
         KotlinPackageJsonTask.create(compilation)
 
-    val publicPackageJsonTaskHolder: TaskProvider<PublicPackageJsonTask> = run {
+    val publicPackageJsonTaskHolder: TaskProvider<PublicPackageJsonTask>
+
+    init {
         val npmResolutionManager = compilation.webTargetVariant(
             { project.kotlinNpmResolutionManager },
             { project.wasmKotlinNpmResolutionManager },
         )
 
-        project.registerTask<PublicPackageJsonTask>(
+        publicPackageJsonTaskHolder = project.registerTask<PublicPackageJsonTask>(
             npmProject.publicPackageJsonTaskName
         ) {
             it.dependsOn(packageJsonTaskHolder)
@@ -88,36 +93,36 @@ class KotlinCompilationNpmResolver(
             it.npmProjectName.set(npmProject.name)
             it.npmProjectMain.set(npmProject.main)
             it.extension.set(compilation.fileExtension)
-        }.also { packageJsonTask ->
-            project.dependencies.attributesSchema {
-                it.attribute(publicPackageJsonAttribute)
-            }
+        }
 
-            val nodeJsRoot = compilation.webTargetVariant(
-                { project.rootProject.kotlinNodeJsRootExtension },
-                { project.rootProject.wasmKotlinNodeJsRootExtension },
-            )
+        project.dependencies.attributesSchema {
+            it.attribute(publicPackageJsonAttribute)
+        }
 
-            nodeJsRoot.packageJsonUmbrellaTaskProvider.configure {
-                it.dependsOn(packageJsonTask)
-            }
+        val nodeJsRoot = compilation.webTargetVariant(
+            { project.rootProject.kotlinNodeJsRootExtension },
+            { project.rootProject.wasmKotlinNodeJsRootExtension },
+        )
 
-            if (compilation.isMain()) {
-                project.tasks
-                    .withType(Zip::class.java)
-                    .configureEach {
-                        if (it.name == npmProject.target.artifactsTaskName) {
-                            it.dependsOn(packageJsonTask)
-                        }
+        nodeJsRoot.packageJsonUmbrellaTaskProvider.configure {
+            it.dependsOn(publicPackageJsonTaskHolder)
+        }
+
+        if (compilation.isMain()) {
+            project.tasks
+                .withType(Zip::class.java)
+                .configureEach {
+                    if (it.name == npmProject.target.artifactsTaskName) {
+                        it.dependsOn(publicPackageJsonTaskHolder)
                     }
+                }
 
-                val publicPackageJsonConfiguration = createPublicPackageJsonConfiguration()
+            val publicPackageJsonConfiguration = createPublicPackageJsonConfiguration()
 
-                target.project.artifacts.add(
-                    publicPackageJsonConfiguration.name,
-                    packageJsonTask.map { it.packageJsonFile },
-                )
-            }
+            target.project.artifacts.add(
+                publicPackageJsonConfiguration.name,
+                publicPackageJsonTaskHolder.map { it.packageJsonFile },
+            )
         }
     }
 
@@ -146,40 +151,36 @@ class KotlinCompilationNpmResolver(
     }
 
     private fun createAggregatedConfiguration(): Configuration {
-        val all = project.configurations.createResolvable(compilation.npmAggregatedConfigurationName)
+        return project.configurations.createResolvable(compilation.npmAggregatedConfigurationName) {
+            usesPlatformOf(target)
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            attributes.attribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
+            isVisible = false
+            description = "NPM configuration for $compilation."
 
-        all.usesPlatformOf(target)
-        all.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
-        all.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        all.attributes.attribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
-        all.isVisible = false
-        all.description = "NPM configuration for $compilation."
-
-        KotlinDependencyScope.values().forEach { scope ->
-            val compilationConfiguration = project.compilationDependencyConfigurationByScope(
-                compilation,
-                scope
-            )
-            all.extendsFrom(compilationConfiguration)
-            compilation.allKotlinSourceSets.forEach { sourceSet ->
-                val sourceSetConfiguration = project.configurations.sourceSetDependencyConfigurationByScope(sourceSet, scope)
-                all.extendsFrom(sourceSetConfiguration)
+            KotlinDependencyScope.values().forEach { scope ->
+                val compilationConfiguration = project.compilationDependencyConfigurationByScope(
+                    compilation,
+                    scope
+                )
+                extendsFrom(compilationConfiguration)
+                compilation.allKotlinSourceSets.forEach { sourceSet ->
+                    val sourceSetConfiguration = project.configurations.sourceSetDependencyConfigurationByScope(sourceSet, scope)
+                    extendsFrom(sourceSetConfiguration)
+                }
             }
         }
-
-        return all
     }
 
     private fun createPublicPackageJsonConfiguration(): Configuration {
-        val all = project.configurations.createConsumable(compilation.publicPackageJsonConfigurationName)
-
-        all.usesPlatformOf(target)
-        all.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
-        all.attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
-        all.attributes.attribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
-        all.isVisible = false
-
-        return all
+        return project.configurations.createConsumable(compilation.publicPackageJsonConfigurationName) {
+            usesPlatformOf(target)
+            attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
+            attributes.attribute(Category.CATEGORY_ATTRIBUTE, project.categoryByName(Category.LIBRARY))
+            attributes.attribute(publicPackageJsonAttribute, PUBLIC_PACKAGE_JSON_ATTR_VALUE)
+            isVisible = false
+        }
     }
 
     inner class ConfigurationVisitor {
