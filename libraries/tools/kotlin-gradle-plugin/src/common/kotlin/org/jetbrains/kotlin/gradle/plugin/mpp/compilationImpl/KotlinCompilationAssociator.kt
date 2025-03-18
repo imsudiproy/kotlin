@@ -10,9 +10,6 @@ import org.gradle.api.artifacts.Dependency
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
-import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.listProperty
@@ -66,6 +63,19 @@ internal object DefaultKotlinCompilationAssociator : KotlinCompilationAssociator
 internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
         auxiliary.compileDependencyFiles += main.output.classesDirs
+
+        target.project.configurations.named(auxiliary.implementationConfigurationName).configure { configuration ->
+            configuration.extendsFrom(target.project.configurations.findByName(main.implementationConfigurationName))
+        }
+    }
+}
+
+internal object KotlinJsWasmCompilationAssociator : KotlinCompilationAssociator {
+    override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
+        auxiliary.compileDependencyFiles += main.output.classesDirs
+
+        // TODO we definitely should not be casting here. I'm only adding it to test if it works.
+        (auxiliary as? KotlinCompilationImpl)?.runtimeDependencyFiles = auxiliary.runtimeDependencyFiles?.plus(main.output.classesDirs)
 
         target.project.configurations.named(auxiliary.implementationConfigurationName).configure { configuration ->
             configuration.extendsFrom(target.project.configurations.findByName(main.implementationConfigurationName))

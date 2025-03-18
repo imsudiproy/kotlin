@@ -199,7 +199,7 @@ abstract class KotlinPackageJsonTask :
                 compilationNpmResolution.internalDependencies.forEach { dependency ->
                     val npmProject = rootResolver[dependency.projectPath][dependency.compilationName].npmProject
                     add(npmProject.packageJsonTaskPath)
-                    add(npmProject.publicPackageJsonTaskName)
+//                    add(npmProject.publicPackageJsonTaskName)
                 }
 
                 compilationNpmResolution.internalCompositeDependencies.forEach { dependency ->
