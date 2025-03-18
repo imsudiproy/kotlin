@@ -29,6 +29,11 @@ sourceSets {
 compilerTests {
     testData(project(":compiler").isolated, "testData/codegen")
     testData(project(":compiler").isolated, "testData/klib")
+    withScriptRuntime()
+    withScriptingPlugin()
+    withAnnotations()
+    withMockJdkRuntime()
+    withTestJar()
 }
 
 fun Project.codegenTest(
@@ -40,11 +45,37 @@ fun Project.codegenTest(
 ): TaskProvider<Test> = projectTest(
     taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
     jUnitMode = JUnitMode.JUnit5,
-    maxMetaspaceSizeMb = 1024
+    maxMetaspaceSizeMb = 1024,
+    defineJDKEnvVariables = listOf(jdk)
 ) {
-    dependsOn(":dist")
-    workingDir = rootDir
     useJUnitPlatform()
+    inputs.file(File(rootDir, "compiler/testData/mockJDKModified/rt.jar")).withNormalizer(ClasspathNormalizer::class)
+    systemProperty(
+        "org.jetbrains.kotlin.test.mockJDKModifiedRuntime",
+        File(rootDir, "compiler/testData/mockJDKModified/rt.jar").absolutePath
+    )
+    inputs.file(File(rootDir, "compiler/testData/mockJDK/jre/lib/annotations.jar")).withNormalizer(ClasspathNormalizer::class)
+    systemProperty(
+        "org.jetbrains.kotlin.test.mockJdkAnnotationsJar",
+        File(rootDir, "compiler/testData/mockJDK/jre/lib/annotations.jar").absolutePath
+    )
+    inputs.dir(File(rootDir, "third-party/annotations")).withPathSensitivity(PathSensitivity.RELATIVE)
+    systemProperty(
+        "third-party/annotations",
+        File(rootDir, "third-party/annotations").absolutePath
+    )
+    inputs.dir(File(rootDir, "third-party/jsr305")).withPathSensitivity(PathSensitivity.RELATIVE)
+    systemProperty(
+        "third-party/jsr305",
+        File(rootDir, "third-party/jsr305").absolutePath
+    )
+    inputs.files(files(File(rootDir, "libraries/stdlib/")).asFileTree.matching {
+        include("**.kt")
+    }).withPathSensitivity(PathSensitivity.RELATIVE) //TODO only kt files
+    systemProperty(
+        "stdlib.path",
+        File(rootDir, "libraries/stdlib/").absolutePath
+    )
 
     val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
     filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")
