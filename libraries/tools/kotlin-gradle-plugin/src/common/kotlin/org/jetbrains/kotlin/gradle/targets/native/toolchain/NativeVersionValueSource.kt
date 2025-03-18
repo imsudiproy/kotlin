@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.gradle.targets.native.toolchain
 
 import org.apache.commons.io.file.FilesUncheck.copy
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.ValueSource
 import org.gradle.api.provider.ValueSourceParameters
 import org.jetbrains.kotlin.gradle.targets.native.internal.NativeDistributionCommonizerLock
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+import org.slf4j.LoggerFactory
 import java.io.File
 
 internal abstract class NativeVersionValueSource :
@@ -24,8 +24,6 @@ internal abstract class NativeVersionValueSource :
         val simpleKotlinNativeVersion: Property<String>
         val kotlinNativeVersion: Property<String>
         val kotlinNativeCompilerConfiguration: Property<ConfigurableFileCollection>
-
-        val fileSystemOperations: Property<FileSystemOperations>
     }
 
     override fun obtain(): String {
@@ -67,14 +65,21 @@ internal abstract class NativeVersionValueSource :
         kotlinNativeBundleConfiguration: ConfigurableFileCollection,
     ) {
         val lock =
-            NativeDistributionCommonizerLock(bundleDir) { message -> println("Kotlin Native Bundle: $message") }
+            NativeDistributionCommonizerLock(bundleDir) { message -> logger.info("Kotlin Native Bundle: $message") }
 
         lock.withLock {
-            removeBundleIfNeeded(reinstallFlag || isSnapshotVersion(parameters.simpleKotlinNativeVersion.get()), bundleDir)
+            val needToReinstall = isSnapshotVersion(parameters.simpleKotlinNativeVersion.get())
+            if (needToReinstall) {
+                logger.debug("Snapshot version could be changed, to be sure that up-to-date version is used, Kotlin/Native should be reinstalled")
+            }
+
+            removeBundleIfNeeded(reinstallFlag || needToReinstall, bundleDir)
 
             if (!bundleDir.resolve(MARKER_FILE).exists()) {
                 val gradleCachesKotlinNativeDir =
                     resolveKotlinNativeConfiguration(kotlinNativeVersion, kotlinNativeBundleConfiguration)
+
+                logger.info("Moving Kotlin/Native bundle from tmp directory $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
 
                 gradleCachesKotlinNativeDir.walk().forEach { sourceFile ->
                     val relativePath = sourceFile.toRelativeString(gradleCachesKotlinNativeDir)
@@ -86,6 +91,8 @@ internal abstract class NativeVersionValueSource :
                 }
 
                 createSuccessfulInstallationFile(bundleDir)
+
+                logger.info("Moved Kotlin/Native bundle from $gradleCachesKotlinNativeDir to ${bundleDir.absolutePath}")
             }
         }
     }
@@ -129,6 +136,7 @@ internal abstract class NativeVersionValueSource :
     companion object {
         private var canBeReinstalled: Boolean = true // we can reinstall a k/n bundle once during the build
         private const val MARKER_FILE = "provisioned.ok"
+        val logger = LoggerFactory.getLogger("org.jetbrains.kotlin.gradle.targets.native.toolchain")
         internal fun isSnapshotVersion(kotlinNativeVersion: String): Boolean =
             KotlinToolingVersion(kotlinNativeVersion).maturity == KotlinToolingVersion.Maturity.SNAPSHOT
     }

@@ -78,42 +78,36 @@ internal class KotlinNativeFromToolchainProvider(
 
     @get:Input
     internal val kotlinNativeBundleVersion: Provider<String> =
-        toolchainEnabled.flatMap {
-            val nativeVersion = if (overriddenKonanHome.isPresent)
-                overriddenKonanHome.get()
-            else
-                NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project)
+        toolchainEnabled.flatMap { toolchainEnabled ->
+            if (toolchainEnabled) {
+                if (overriddenKonanHome.isPresent) {
+                    project.logger.info("A user-provided Kotlin/Native distribution configured: ${overriddenKonanHome.get()}. Disabling Kotlin Native Toolchain auto-provisioning.")
+                    overriddenKonanHome
+                } else {
+                    providerFactory.of(NativeVersionValueSource::class.java) {
+                        it.parameters.bundleDirectory.set(project.nativeProperties.actualNativeHomeDirectory.map { it.absolutePath })
+                        it.parameters.reinstallBundle.set(reinstallBundle)
+                        it.parameters.kotlinNativeVersion.set(NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project))
+                        it.parameters.simpleKotlinNativeVersion.set(project.nativeProperties.kotlinNativeVersion)
+                        it.parameters.kotlinNativeCompilerConfiguration.set(
+                            project.objects.fileCollection()
+                                .from(
+                                    // without enabled there is no configuration with this name, so we should return empty provider to support configuration cache
+                                    project.configurations.named(
+                                        KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
+                                    )
 
-            if (it) {
-                val simpleNativeVersion = project.nativeProperties.kotlinNativeVersion
-                providerFactory.of(NativeVersionValueSource::class.java) {
-                    it.parameters.bundleDirectory.set(project.nativeProperties.actualNativeHomeDirectory.map { it.absolutePath })
-                    it.parameters.reinstallBundle.set(reinstallBundle)
-                    it.parameters.kotlinNativeVersion.set(nativeVersion)
-                    it.parameters.simpleKotlinNativeVersion.set(simpleNativeVersion)
-                    it.parameters.kotlinNativeCompilerConfiguration.set(
-                        project.objects.fileCollection()
-                            .from(
-                                // without enabled there is no configuration with this name, so we should return empty provider to support configuration cache
-                                project.configurations.named(
-                                    KOTLIN_NATIVE_BUNDLE_CONFIGURATION_NAME
                                 )
-
-                            )
-                    )
-                }.also {
-                    //logger can't be injected into ValueSource class and cannot be used as a parameter as it is a non-serializable class
-                    if (overriddenKonanHome.isPresent) {
-                        project.logger.info("A user-provided Kotlin/Native distribution configured: ${overriddenKonanHome}. Disabling Kotlin Native Toolchain auto-provisioning.")
-                    } else {
-                        if (NativeVersionValueSource.isSnapshotVersion(simpleNativeVersion.get())) {
-                            project.logger.info("Snapshot version could be changed, to be sure that up-to-date version is used, Kotlin/Native should be reinstalled")
-                        }
+                        )
                     }
-                    project.logger.info("Kotlin/Native bundle is moved to ${project.nativeProperties.actualNativeHomeDirectory.get().absolutePath}")
                 }
             } else {
-                providerFactory.provider { nativeVersion }
+                providerFactory.provider {
+                    if (overriddenKonanHome.isPresent)
+                        overriddenKonanHome.get()
+                    else
+                        NativeCompilerDownloader.getDependencyNameWithOsAndVersion(project)
+                }
             }
         }.zip(kotlinNativeBundleBuildService) { nativeVersion, nativeBundleService ->
             nativeBundleService.setupKotlinNativePlatformLibraries(
@@ -156,9 +150,10 @@ internal class KotlinNativeFromToolchainProvider(
     internal val actualNativeHomeDirectory: Provider<File> = project.nativeProperties.actualNativeHomeDirectory
 
     @get:Internal
-    internal val konanTargetsWithNativeCacheKind: Map<KonanTarget, Provider<NativeCacheKind>> = konanTargets.associateWith { konanTarget ->
-        kotlinNativeBundleBuildService.flatMap { it.getNativeCacheKind(project, konanTarget) }
-    }
+    internal val konanTargetsWithNativeCacheKind: Map<KonanTarget, Provider<NativeCacheKind>> =
+        konanTargets.associateWith { konanTarget ->
+            kotlinNativeBundleBuildService.flatMap { it.getNativeCacheKind(project, konanTarget) }
+        }
 
     @get:Internal
     internal val objects = project.provider { project.objects }
