@@ -227,18 +227,13 @@ class KotlinNativeCompileArgumentsTest {
             "org.jetbrains.kotlin.native.platform.$it"
         }.toSet()
 
-        val actualNativeDependencies = nativeCompilation.nativeDependencies
-            .files
-            .map { it.name }
-            .toSet()
-
-        assertEquals(expectedPlatformDependencies, actualNativeDependencies)
+        val expectedDependencies = expectedPlatformDependencies + listOf("stdlib")
 
         val actualDependencies = nativeCompilation.compileDependencyFiles
             .map { it.name }
             .toSet()
 
-        assertEquals(setOf("stdlib"), actualDependencies)
+        assertEquals(expectedDependencies, actualDependencies)
     }
 
     @Test
