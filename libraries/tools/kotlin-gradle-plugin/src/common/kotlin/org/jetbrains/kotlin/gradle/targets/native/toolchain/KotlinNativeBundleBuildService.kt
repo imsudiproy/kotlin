@@ -134,7 +134,7 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
                     distribution.properties,
                     distribution.dependenciesDir,
                     progressCallback = { url, currentBytes, totalBytes ->
-                        log.debug("Downloading dependency for Kotlin Native: $url (${currentBytes}/${totalBytes}). ")
+                        log.info("Downloading dependency for Kotlin Native: $url (${currentBytes}/${totalBytes}). ")
                     }
                 ) as KonanPropertiesLoader
 
