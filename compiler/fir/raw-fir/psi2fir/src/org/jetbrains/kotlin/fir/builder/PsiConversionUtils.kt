@@ -130,7 +130,7 @@ internal fun AbstractRawFirBuilder<*>.generateDestructuringBlock(
     tmpVariable: Boolean,
 ): FirBlock {
     return buildBlock {
-        source = multiDeclaration.toKtPsiSourceElement()
+        source = multiDeclaration.toKtPsiSourceElement(KtFakeSourceElementKind.DestructuringBlock)
         addDestructuringVariables(
             statements,
             c,
