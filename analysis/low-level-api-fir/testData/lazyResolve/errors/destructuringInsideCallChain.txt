@@ -1,0 +1,11 @@
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] destructuringInsideCallChain.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun main([ResolvedTo(BODY_RESOLVE)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        ERROR_EXPR(The expression cannot be a selector (occur after a dot))String(hello).<Unresolved name: println>#
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(BODY_RESOLVE)] destructuringInsideCallChain.kt
+    public final [ResolvedTo(BODY_RESOLVE)] fun main([ResolvedTo(BODY_RESOLVE)] args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
+        ERROR_EXPR(The expression cannot be a selector (occur after a dot))String(hello).<Unresolved name: println>#
+    }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.Duplicate
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isErrorElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.builder.toFirOperationOrNull
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -39,6 +40,12 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
                         cache[psi] = fir
                     }
                 }
+
+                psi is KtDestructuringDeclaration && existingFir is FirBlock && fir is FirProperty -> {
+                    // Invalid code: take the property as the more precise node for a destructuring declaration
+                    cache[psi] = fir
+                }
+
                 existingFir.isErrorElement && !fir.isErrorElement -> {
                     // TODO better handle error elements
                     // but for now just take first non-error one if such exist

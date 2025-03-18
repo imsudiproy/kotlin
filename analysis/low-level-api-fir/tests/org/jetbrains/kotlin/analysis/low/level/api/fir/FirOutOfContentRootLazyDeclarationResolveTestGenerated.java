@@ -1266,6 +1266,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("destructuringInsideCallChain.kt")
+    public void testDestructuringInsideCallChain() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/destructuringInsideCallChain.kt");
+    }
+
+    @Test
     @TestMetadata("parameterNoType.kt")
     public void testParameterNoType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/parameterNoType.kt");
