@@ -195,17 +195,19 @@ abstract class KotlinPackageJsonTask :
             rootResolver: KotlinRootNpmResolver,
             compilationNpmResolution: KotlinCompilationNpmResolution,
         ): Collection<Any> {
-            val internalDepsTasks = compilationNpmResolution.internalDependencies.map { dependency ->
-                rootResolver[dependency.projectPath][dependency.compilationName].npmProject.packageJsonTaskPath
-            }
+            return buildSet {
+                compilationNpmResolution.internalDependencies.forEach { dependency ->
+                    val npmProject = rootResolver[dependency.projectPath][dependency.compilationName].npmProject
+                    add(npmProject.packageJsonTaskPath)
+                    add(npmProject.publicPackageJsonTaskName)
+                }
 
-            val compoBuildTasks = compilationNpmResolution.internalCompositeDependencies.map { dependency ->
-                dependency.includedBuild?.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME")
-                    ?: error("includedBuild instance is not available from $dependency")
-                dependency.includedBuild.task(":${RootPackageJsonTask.NAME}")
+                compilationNpmResolution.internalCompositeDependencies.forEach { dependency ->
+                    val includedBuild = dependency.includedBuild ?: error("includedBuild instance is not available from $dependency")
+                    add(includedBuild.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME"))
+                    add(includedBuild.task(":${RootPackageJsonTask.NAME}"))
+                }
             }
-
-            return internalDepsTasks + compoBuildTasks
         }
 
         private fun getCompilationResolver(
