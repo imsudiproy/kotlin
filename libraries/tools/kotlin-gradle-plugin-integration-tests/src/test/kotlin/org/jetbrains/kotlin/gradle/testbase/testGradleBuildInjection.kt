@@ -808,8 +808,7 @@ private fun escapedBuildScriptClasspath(): List<String> {
     val injectionClasses = System.getProperty(buildScriptInjectionsClasspathProperty)
         ?: error("Missing required system property '${buildScriptInjectionsClasspathProperty}'")
     return injectionClasses.split(":").map { path ->
-        path.replace("\\", "\\\\")
-        path.replace("$", "\\$")
+        path.replace("\\", "\\\\").replace("$", "\\$")
     }
 }
 
