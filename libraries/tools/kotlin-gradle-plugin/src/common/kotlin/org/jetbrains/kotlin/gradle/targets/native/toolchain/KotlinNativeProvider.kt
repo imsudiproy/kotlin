@@ -111,11 +111,11 @@ internal class KotlinNativeFromToolchainProvider(
             }
         }.zip(kotlinNativeBundleBuildService) { nativeVersion, nativeBundleService ->
             nativeBundleService.setupKotlinNativePlatformLibraries(
-                objects.get(),
+                objects,
                 konanTargetsWithNativeCacheKind,
                 nativeDistributionType.orNull,
                 kotlinCompilerArgumentsLogLevel,
-                useXcodeMessageStyle.get(),
+                useXcodeMessageStyle,
                 nativeClasspath.get(),
                 nativeJvmArgs,
                 actualNativeHomeDirectory,
@@ -156,13 +156,13 @@ internal class KotlinNativeFromToolchainProvider(
         }
 
     @get:Internal
-    internal val objects = project.provider { project.objects }
+    internal val objects = project.objects
 
     @get:Internal
     internal val kotlinCompilerArgumentsLogLevel = project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel
 
     @get:Internal
-    internal val useXcodeMessageStyle = project.provider { project.useXcodeMessageStyle }
+    internal val useXcodeMessageStyle = project.useXcodeMessageStyle
 
     @get:Internal
     internal val nativeClasspath = project.provider {
