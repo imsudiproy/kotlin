@@ -352,7 +352,7 @@ class KotlinCompilationNpmResolver(
             val dependentProject = project.findProject(component.projectPath)
                 ?: return true // if there's no local project with the same path the identifier must be for an included build project.
 
-            if (true) {
+            if (false) {
                 return dependentProject !in project.currentBuild
             } else {
                 val dependencyCoords = dependency.run { "${moduleGroup}:${moduleName}:${moduleVersion}" }
