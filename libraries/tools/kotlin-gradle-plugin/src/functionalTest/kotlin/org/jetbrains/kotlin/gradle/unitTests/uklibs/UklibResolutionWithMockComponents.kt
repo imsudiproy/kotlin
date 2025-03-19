@@ -274,6 +274,7 @@ class UklibResolutionTestsWithMockComponents {
     fun `uklib resolution - all configurations can resolve stdlib`() {
         val consumer = uklibConsumer {
             repositories.mavenLocal()
+            repositories.mavenCentral()
             kotlin {
                 iosArm64()
                 jvm()
