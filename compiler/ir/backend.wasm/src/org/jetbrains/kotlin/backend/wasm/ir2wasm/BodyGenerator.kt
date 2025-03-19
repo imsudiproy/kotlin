@@ -867,12 +867,12 @@ class BodyGenerator(
 
             wasmSymbols.wasmGetRttiSupportedInterfaces -> {
                 body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), anyToRttiId, location)
-                body.buildStructGet(wasmFileCodegenContext.rttiType, rttiToSupportedIFacesId, location)
+                body.buildStructGet(wasmFileCodegenContext.rttiType, rttiToImplementedIFacesId, location)
             }
 
             wasmSymbols.wasmGetRttiSuperClass -> {
                 body.buildRefCastStatic(wasmFileCodegenContext.rttiType, location)
-                body.buildStructGet(wasmFileCodegenContext.rttiType, rttiToSuperTypeId, location)
+                body.buildStructGet(wasmFileCodegenContext.rttiType, rttiToSuperClassId, location)
             }
 
             wasmSymbols.reflectionSymbols.wasmGetInterfaceVTableBodyImpl -> {
@@ -884,7 +884,7 @@ class BodyGenerator(
                 //wasmArrayAnyIndexOfValue(obj.rtti.interfaceIds)
                 body.buildGetLocal(functionContext.referenceLocal(0), location) //obj
                 body.buildStructGet(wasmFileCodegenContext.referenceGcType(irBuiltIns.anyClass), anyToRttiId, location)
-                body.buildStructGet(wasmFileCodegenContext.rttiType, rttiToSupportedIFacesId, location)
+                body.buildStructGet(wasmFileCodegenContext.rttiType, rttiToImplementedIFacesId, location)
                 body.buildGetLocal(functionContext.referenceLocal(1), location) //interfaceId
                 body.buildCall(wasmFileCodegenContext.referenceFunction(wasmSymbols.wasmArrayAnyIndexOfValue), location)
 
@@ -1436,7 +1436,7 @@ class BodyGenerator(
         val anyToITableId = WasmSymbol(1)
         val anyToRttiId = WasmSymbol(2)
         val vTableToSpecialITableId = WasmSymbol(0)
-        val rttiToSupportedIFacesId = WasmSymbol(0)
-        val rttiToSuperTypeId = WasmSymbol(1)
+        val rttiToImplementedIFacesId = WasmSymbol(0)
+        val rttiToSuperClassId = WasmSymbol(1)
     }
 }
