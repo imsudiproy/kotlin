@@ -11,6 +11,18 @@ import org.gradle.api.initialization.IncludedBuild
 import java.io.File
 import java.io.Serializable
 
+/**
+ * Represents a dependency on a Kotlin/JS project from a remote repository.
+ *
+ * This is an internal KGP utility and should not be used in user buildscripts.
+ *
+ * Used in npm dependency management.
+ * We use this to extract the `package.json` from the `.klib` in
+ * [org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolution.createPreparedResolution].
+ *
+ * KBT should look at removing this and replacing it with an artifact transformer,
+ * but there is no planned work yet.
+ */
 data class ExternalGradleDependency(
     val dependency: ResolvedDependency,
     val artifact: ResolvedArtifact
