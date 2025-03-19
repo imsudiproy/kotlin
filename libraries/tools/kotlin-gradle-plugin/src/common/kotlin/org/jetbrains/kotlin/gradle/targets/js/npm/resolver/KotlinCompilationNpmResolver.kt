@@ -10,12 +10,10 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.FileCollectionDependency
 import org.gradle.api.artifacts.ResolvedArtifact
 import org.gradle.api.artifacts.ResolvedDependency
-import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
-import org.gradle.api.internal.artifacts.DefaultProjectComponentIdentifier
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Zip
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -37,10 +35,7 @@ import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.createConsumable
 import org.jetbrains.kotlin.gradle.utils.createResolvable
 import org.jetbrains.kotlin.gradle.utils.currentBuild
-import org.jetbrains.kotlin.gradle.utils.topRealPathInternal
 import java.io.Serializable
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNpmResolutionManager as wasmKotlinNpmResolutionManager
 
@@ -185,7 +180,6 @@ class KotlinCompilationNpmResolver(
 
     inner class ConfigurationVisitor {
         private val internalDependencies = mutableSetOf<InternalDependency>()
-        private val internalCompositeDependencies = mutableSetOf<CompositeDependency>()
         private val externalGradleDependencies = mutableSetOf<ExternalGradleDependency>()
         private val externalNpmDependencies = mutableSetOf<NpmDependencyDeclaration>()
         private val fileCollectionDependencies = mutableSetOf<FileCollectionExternalGradleDependency>()
@@ -257,36 +251,14 @@ class KotlinCompilationNpmResolver(
             val artifactId = artifact.id
             val componentIdentifier = artifactId.componentIdentifier
 
-            val isCompoBuild = isCompositeBuildDependency(project, componentIdentifier, dependency)
-
-            if (componentIdentifier is ProjectComponentIdentifier && isCompoBuild) {
-                visitCompositeProjectDependency(
-                    dependency,
-                    componentIdentifier
-                )
-            }
-
-            if (componentIdentifier is ProjectComponentIdentifier && !isCompoBuild) {
+            if (
+                componentIdentifier is ProjectComponentIdentifier
+                && !isCompositeBuildDependency(project, componentIdentifier, dependency)
+            ) {
                 visitProjectDependency(componentIdentifier)
             } else {
                 externalGradleDependencies.add(ExternalGradleDependency(dependency, artifact))
             }
-        }
-
-        private fun visitCompositeProjectDependency(
-            dependency: ResolvedDependency,
-            componentIdentifier: ProjectComponentIdentifier,
-        ) {
-            require(componentIdentifier is DefaultProjectComponentIdentifier)
-            val includedBuild = project.gradle.includedBuild(componentIdentifier.identityPath.topRealPathInternal().name!!)
-            internalCompositeDependencies.add(
-                CompositeDependency(
-                    dependencyName = dependency.moduleName,
-                    dependencyVersion = dependency.moduleVersion,
-                    includedBuildDir = includedBuild.projectDir,
-                    includedBuild = includedBuild,
-                )
-            )
         }
 
         private fun visitProjectDependency(
@@ -309,7 +281,7 @@ class KotlinCompilationNpmResolver(
 
         fun toPackageJsonProducer() = KotlinCompilationNpmResolution(
             internalDependencies = internalDependencies,
-            internalCompositeDependencies = internalCompositeDependencies,
+            internalCompositeDependencies = emptyList(),
             externalGradleDependencies = externalGradleDependencies.map {
                 FileExternalGradleDependency(
                     it.dependency.moduleName,
@@ -338,22 +310,15 @@ class KotlinCompilationNpmResolver(
         /**
          * Determine if [component] is a project dependency from an included composite build.
          */
-        @OptIn(ExperimentalContracts::class)
         private fun isCompositeBuildDependency(
             project: Project,
-            component: ComponentIdentifier,
+            component: ProjectComponentIdentifier,
             dependency: ResolvedDependency,
         ): Boolean {
-            contract { returns(true) implies (component is ProjectComponentIdentifier) }
-
-            if (component !is ProjectComponentIdentifier) {
-                return false
-            }
-
             val dependentProject = project.findProject(component.projectPath)
                 ?: return true // if there's no local project with the same path the identifier must be for an included build project.
 
-            if (false) {
+            if (true) {
                 return dependentProject !in project.currentBuild
             } else {
                 val dependencyCoords = dependency.run { "${moduleGroup}:${moduleName}:${moduleVersion}" }

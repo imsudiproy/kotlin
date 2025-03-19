@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinCompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationFriendPathsResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.DefaultKotlinCompilationPreConfigure
-import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinJsWasmCompilationAssociator
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.DefaultKotlinCompilationDependencyConfigurationsFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinJsCompilerOptionsFactory
@@ -40,7 +39,6 @@ class KotlinJsIrCompilationFactory internal constructor(
                 sourcesJarTask(compilation, compilation.target.targetName, artifactNameAppendix)
             }
         },
-        compilationAssociator = KotlinJsWasmCompilationAssociator,
     )
 
     override fun create(name: String): KotlinJsIrCompilation = target.project.objects.newInstance(

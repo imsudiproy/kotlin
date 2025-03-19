@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
-import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinCompilationNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.PackageJsonProducerInputs
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.tasks.registerTask
@@ -49,12 +50,17 @@ abstract class KotlinPackageJsonTask :
     @get:Input
     internal abstract val toolsNpmDependencies: ListProperty<String>
 
-    /** Should contain only `package.json` files, but also contains test compilation (we want to fix) */
+    /**
+     * Contains `package.json` files from Kotlin/JS projects (not external dependencies) that the current project depends on.
+     *
+     * Required for up-to-date checks:
+     * If the npm dependencies of any dependency change, this task should re-run.
+     */
     @get:IgnoreEmptyDirectories
     @get:NormalizeLineEndings
     @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal abstract val compositeFiles: ConfigurableFileCollection
+    internal abstract val packageJsonFilesFromProjectDependencies: ConfigurableFileCollection
 
     @get:Nested
     internal abstract val producerInputs: Property<PackageJsonProducerInputs>
@@ -125,7 +131,7 @@ abstract class KotlinPackageJsonTask :
                     }
                 ).disallowChanges()
 
-                task.compositeFiles.from(
+                task.packageJsonFilesFromProjectDependencies.from(
                     project.provider {
                         getCompilationResolver(
                             nodeJsRoot,
@@ -140,8 +146,6 @@ abstract class KotlinPackageJsonTask :
                             }
                             .artifacts
                             .artifactFiles
-                            .toSet() // remove task dependencies, add them manually below
-                        // TODO document why task dependencies removed
                     }
                 ).disallowChanges()
 
@@ -160,22 +164,6 @@ abstract class KotlinPackageJsonTask :
                     it.npmResolutionManager.get().isConfiguringState()
                 }
 
-                /**
-                 * Manually add task dependencies for [compositeFiles], for complicated legacy reasons.
-                 */
-                task.dependsOn(
-                    target.project.provider {
-                        findDependentTasks(
-                            nodeJsRoot.resolver,
-                            getCompilationResolver(
-                                nodeJsRoot,
-                                projectPath,
-                                compilationDisambiguatedName
-                            ).compilationNpmResolution
-                        )
-                    }
-                )
-
                 task.dependsOn(nodeJsRoot.npmCachesSetupTaskProvider)
             }
 
@@ -189,25 +177,6 @@ abstract class KotlinPackageJsonTask :
                 }
 
             return packageJsonTask
-        }
-
-        private fun findDependentTasks(
-            rootResolver: KotlinRootNpmResolver,
-            compilationNpmResolution: KotlinCompilationNpmResolution,
-        ): Collection<Any> {
-            return buildSet {
-                compilationNpmResolution.internalDependencies.forEach { dependency ->
-                    val npmProject = rootResolver[dependency.projectPath][dependency.compilationName].npmProject
-                    add(npmProject.packageJsonTaskPath)
-//                    add(npmProject.publicPackageJsonTaskName)
-                }
-
-                compilationNpmResolution.internalCompositeDependencies.forEach { dependency ->
-                    val includedBuild = dependency.includedBuild ?: error("includedBuild instance is not available from $dependency")
-                    add(includedBuild.task(":$PACKAGE_JSON_UMBRELLA_TASK_NAME"))
-                    add(includedBuild.task(":${RootPackageJsonTask.NAME}"))
-                }
-            }
         }
 
         private fun getCompilationResolver(
