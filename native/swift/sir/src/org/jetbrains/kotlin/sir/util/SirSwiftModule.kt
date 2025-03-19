@@ -32,6 +32,7 @@ object SirSwiftModule : SirModule() {
     val double = struct("Double")
     val float = struct("Float")
 
+    val int = struct("Int")
     val uint = struct("UInt")
 
     val void = struct("Void")

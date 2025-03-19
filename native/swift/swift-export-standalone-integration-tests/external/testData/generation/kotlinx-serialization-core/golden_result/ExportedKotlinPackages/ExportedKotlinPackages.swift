@@ -8,8 +8,6 @@ public enum kotlinx {
         }
         public enum descriptors {
         }
-        public enum encoding {
-        }
         public enum `internal` {
         }
         public enum modules {

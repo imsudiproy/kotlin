@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.sir.providers.impl
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
+import org.jetbrains.kotlin.analysis.api.export.utilities.hasAnyTypeParameter
 import org.jetbrains.kotlin.analysis.api.export.utilities.isClone
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
@@ -24,6 +25,8 @@ import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
 import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
+import org.jetbrains.kotlin.sir.providers.utils.isFromTemporarilyIgnoredPackage
+import org.jetbrains.kotlin.analysis.api.export.utilities.*
 
 public class SirVisibilityCheckerImpl(
     private val sirSession: SirSession,
@@ -115,8 +118,12 @@ public class SirVisibilityCheckerImpl(
         return true
     }
 
-    @OptIn(KaExperimentalApi::class)
     private fun KaNamedClassSymbol.isExported(ktAnalysisSession: KaSession): Boolean = with(ktAnalysisSession) {
+
+        if (isFromTemporarilyIgnoredPackage()) {
+            return false
+        }
+
         // Any is exported as a KotlinBase class.
         if (classId == DefaultTypeClassIds.ANY) {
             return false
@@ -134,17 +141,21 @@ public class SirVisibilityCheckerImpl(
             }
             return true
         }
-        if (typeParameters.isNotEmpty() || defaultType.allSupertypes.any { it.symbol?.typeParameters?.isNotEmpty() == true }) {
+
+        if (!isAllSuperTypesExported(ktAnalysisSession) { this.isExported(ktAnalysisSession) }) {
+            return false
+        }
+
+        if (hasAnyTypeParameter(ktAnalysisSession)) {
             unsupportedDeclarationReporter.report(this@isExported, "generics are not supported yet.")
             return false
         }
+
         if (isInline) {
             unsupportedDeclarationReporter.report(this@isExported, "inline classes are not supported yet.")
             return false
         }
-        if (classId?.asSingleFqName()?.startsWith(FqName("kotlin.reflect")) == true) {
-            return false
-        }
+
         return true
     }
 
@@ -166,7 +177,7 @@ public class SirVisibilityCheckerImpl(
     }
 
     private fun KaSession.isValueOfOnEnum(function: KaNamedFunctionSymbol): Boolean {
-        with (function) {
+        with(function) {
             val parent = containingSymbol as? KaClassSymbol ?: return false
             return isStatic && name == StandardNames.ENUM_VALUE_OF && parent.classKind == KaClassKind.ENUM_CLASS
         }
