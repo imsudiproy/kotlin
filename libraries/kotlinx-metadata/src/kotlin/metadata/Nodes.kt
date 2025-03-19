@@ -434,6 +434,11 @@ public class KmValueParameter internal constructor(
     public var varargElementType: KmType? = null
 
     /**
+     * Default value of the parameter, if this is a parameter of an annotation class constructor.
+     */
+    public var annotationParameterDefaultValue: KmAnnotationArgument? = null
+
+    /**
      * Annotations on the value parameter.
      */
     public val annotations: MutableList<KmAnnotation> = ArrayList(0)
