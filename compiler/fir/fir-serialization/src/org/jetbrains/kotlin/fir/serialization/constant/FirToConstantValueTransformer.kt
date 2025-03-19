@@ -44,23 +44,25 @@ internal inline fun <reified T : ConstantValue<*>> FirExpression.toConstantValue
     scopeSession: ScopeSession,
     constValueProvider: ConstValueProvider?
 ): T? {
-    val valueFromIr = constValueProvider?.findConstantValueFor(this)
-    if (valueFromIr != null) return valueFromIr as? T
-
-    val valueFromFir = when (this) {
-        is FirAnnotation -> this.evaluateToAnnotationValue(session, scopeSession)
-        else -> this.toConstantValue(session, scopeSession)
-    }
-    return valueFromFir as? T
+    return toConstantValueImpl(session, scopeSession, constValueProvider) as? T
 }
 
 internal fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
     return this?.accept(FirToConstantValueChecker, session) == true
 }
 
-// --------------------------------------------- private implementation part ---------------------------------------------
+private fun FirElement.toConstantValueImpl(
+    session: FirSession, scopeSession: ScopeSession, constValueProvider: ConstValueProvider?,
+): ConstantValue<*>? {
+    if (this is FirExpression) {
+        val valueFromIr = constValueProvider?.findConstantValueFor(this)
+        if (valueFromIr != null) return valueFromIr
+    }
 
-private fun FirElement.toConstantValue(session: FirSession, scopeSession: ScopeSession): ConstantValue<*>? {
+    if (this is FirAnnotation) {
+        return this.evaluateToAnnotationValue(session, scopeSession, constValueProvider)
+    }
+
     return when (this) {
         is FirLiteralExpression -> {
             val value = this.value
@@ -93,23 +95,21 @@ private fun FirElement.toConstantValue(session: FirSession, scopeSession: ScopeS
                     if (constructedClassSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
 
                     val constructorCall = this as FirFunctionCall
-                    val mappingToFirExpression = (constructorCall.argumentList as FirResolvedArgumentList).toAnnotationArgumentMapping().mapping
+                    val mappingToFirExpression =
+                        (constructorCall.argumentList as FirResolvedArgumentList).toAnnotationArgumentMapping().mapping
                     val mappingToConstantValues = mappingToFirExpression
-                        .mapValues { it.value.toConstantValue(session, scopeSession) ?: return null }
+                        .mapValues { it.value.toConstantValueImpl(session, scopeSession, constValueProvider) ?: return null }
                         .fillEmptyArray(symbol, session)
                     AnnotationValue.create(constructedClassSymbol.classId, mappingToConstantValues)
                 }
                 else -> null
             }
         }
-        is FirAnnotation -> {
-            val mappingToFirExpression = this.argumentMapping.mapping
-            val mappingToConstantValues = mappingToFirExpression.mapValues { it.value.toConstantValue(session, scopeSession) ?: return null }
-            this.toAnnotationValue(mappingToConstantValues, session, scopeSession)
-        }
         is FirGetClassCall -> create(this.argument.resolvedType)
         is FirEnumEntryDeserializedAccessExpression -> EnumValue(this.enumClassId, this.enumEntryName)
-        is FirArrayLiteral -> ArrayValue(this.argumentList.arguments.mapNotNull { it.toConstantValue(session, scopeSession) })
+        is FirArrayLiteral -> ArrayValue(this.argumentList.arguments.mapNotNull {
+            it.toConstantValueImpl(session, scopeSession, constValueProvider)
+        })
         is FirVarargArgumentsExpression -> {
             val arguments = this.arguments.let {
                 // Named, spread or array literal arguments for vararg parameters have the form Vararg(Named/Spread?(ArrayLiteral(..))).
@@ -117,13 +117,15 @@ private fun FirElement.toConstantValue(session: FirSession, scopeSession: ScopeS
                 (it.singleOrNull()?.unwrapArgument() as? FirArrayLiteral)?.arguments ?: it
             }
 
-            return ArrayValue(arguments.mapNotNull { it.toConstantValue(session, scopeSession) })
+            return ArrayValue(arguments.mapNotNull { it.toConstantValueImpl(session, scopeSession, constValueProvider) })
         }
         else -> null
     }
 }
 
-private fun FirAnnotation.evaluateToAnnotationValue(session: FirSession, scopeSession: ScopeSession): AnnotationValue {
+private fun FirAnnotation.evaluateToAnnotationValue(
+    session: FirSession, scopeSession: ScopeSession, constValueProvider: ConstValueProvider?,
+): AnnotationValue {
     val mappingFromFrontend = FirExpressionEvaluator.evaluateAnnotationArguments(this, session)
         ?: errorWithAttachment("Can't compute constant annotation argument mapping") {
             withFirEntry("annotation", this@evaluateToAnnotationValue)
@@ -131,7 +133,7 @@ private fun FirAnnotation.evaluateToAnnotationValue(session: FirSession, scopeSe
     val result = argumentMapping.mapping.mapValuesTo(mutableMapOf()) { (name, _) ->
         mappingFromFrontend[name]?.let {
             val evaluatedValue = (it as? FirEvaluatorResult.Evaluated)?.result
-            evaluatedValue?.toConstantValue(session, scopeSession)
+            evaluatedValue?.toConstantValueImpl(session, scopeSession, constValueProvider)
         } ?: errorWithAttachment("Cannot convert value for parameter \"$name\" to constant") {
             withFirEntry("argument", argumentMapping.mapping[name]!!)
             withFirEntry("annotation", this@evaluateToAnnotationValue)
