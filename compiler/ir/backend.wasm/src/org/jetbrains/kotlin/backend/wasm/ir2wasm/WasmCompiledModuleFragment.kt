@@ -229,7 +229,7 @@ class WasmCompiledModuleFragment(
         val rttiTypeDeclaration = WasmStructDeclaration(
             name = "RTTI",
             fields = listOf(
-                WasmStructFieldDeclaration("supportedIFaces", WasmRefNullType(WasmHeapType.Type(WasmSymbol(wasmLongArray))), false),
+                WasmStructFieldDeclaration("implementedIFaceIds", WasmRefNullType(WasmHeapType.Type(WasmSymbol(wasmLongArray))), false),
                 WasmStructFieldDeclaration("superClassRtti", WasmRefNullType(WasmHeapType.Type(rttiTypeDeclarationSymbol)), false),
                 WasmStructFieldDeclaration("packageNameAddress", WasmI32, false),
                 WasmStructFieldDeclaration("packageNameLength", WasmI32, false),
