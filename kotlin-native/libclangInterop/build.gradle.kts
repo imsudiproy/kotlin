@@ -26,7 +26,7 @@ nativeInteropPlugin {
             // Let some symbols be undefined to avoid linking unnecessary parts.
             listOf(
                     "_futimens",
-                    "__ZN4llvm7remarks11parseFormatENS_9StringRefE",
+                    //"__ZN4llvm7remarks11parseFormatENS_9StringRefE",
                     "__ZN4llvm7remarks22createRemarkSerializerENS0_6FormatENS0_14SerializerModeERNS_11raw_ostreamE",
                     "__ZN4llvm7remarks14YAMLSerializerC1ERNS_11raw_ostreamENS0_14UseStringTableE",
                     "__ZN4llvm3omp22getOpenMPDirectiveNameENS0_9DirectiveE",
@@ -44,7 +44,7 @@ nativeInteropPlugin {
                     "__ZN4llvm3omp10OMPContextC2EbNS_6TripleE",
                     "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS0_13TraitSelectorENS_9StringRefE",
                     "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyENS_9StringRefE",
-                    "__ZN4llvm15OpenMPIRBuilder25getOpenMPDefaultSimdAlignERKNS_6TripleERKNS_9StringMapIbNS_15MallocAllocatorEEE",
+                    //"__ZN4llvm15OpenMPIRBuilder25getOpenMPDefaultSimdAlignERKNS_6TripleERKNS_9StringMapIbNS_15MallocAllocatorEEE",
                     "__ZN4llvm3omp20getDirectiveCategoryENS0_9DirectiveE",
                     "__ZN4llvm3omp23getDirectiveAssociationENS0_9DirectiveE",
                     "__ZN4llvm3omp23getLeafConstructsOrSelfENS0_9DirectiveE",
@@ -72,6 +72,8 @@ nativeInteropPlugin {
                     "LLVMBitWriter", "LLVMBitReader", "LLVMAnalysis", "LLVMProfileData", "LLVMCore",
                     "LLVMSupport", "LLVMBinaryFormat", "LLVMDemangle",
                     "LLVMTargetParser", "LLVMBitReader",
+                    "LLVMFrontendOpenMP", "LLVMFrontendOffloading", "LLVMBitstreamReader", "LLVMTransformUtils", "LLVMScalarOpts", "LLVMCASUtil",
+                    "LLVMRemarks",
             ).mapTo(this) { "${nativeDependencies.llvmPath}/lib/${lib(it)}" }
         }
     })
