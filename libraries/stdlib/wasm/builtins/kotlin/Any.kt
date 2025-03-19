@@ -44,7 +44,7 @@ public actual open class Any @WasmPrimitiveConstructor actual constructor() {
      * Returns a string representation of the object.
      */
     public actual open fun toString(): String =
-        "${this::class.qualifiedName}@${identityHashCode()}"
+        "${getSimpleName(wasmGetObjectRtti(this))}@${identityHashCode()}"
 }
 
 // Don't use outside, otherwise it could break classes reusing `_hashCode` field, like String.

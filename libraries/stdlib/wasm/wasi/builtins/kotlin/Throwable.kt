@@ -5,6 +5,8 @@
 
 package kotlin
 
+import kotlin.wasm.internal.*
+
 /**
  * The base class for all errors and exceptions. Only instances of this class can be thrown or caught.
  *
@@ -29,7 +31,7 @@ public actual constructor(public actual open val message: String?, public actual
      * followed by the exception message if it is not null.
      */
     public override fun toString(): String {
-        val s = this::class.simpleName ?: ""
+        val s = getSimpleName(wasmGetObjectRtti(this))
         return if (message != null) "$s: $message" else s
     }
 }
