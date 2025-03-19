@@ -43,6 +43,8 @@ nativeInteropPlugin {
                     "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS_9StringRefE",
                     "__ZN4llvm3omp10OMPContextC2EbNS_6TripleE",
                     "__ZN4llvm3omp33getOpenMPContextTraitPropertyKindENS0_8TraitSetENS0_13TraitSelectorENS_9StringRefE",
+                    "__ZN4llvm3omp33getOpenMPContextTraitPropertyNameENS0_13TraitPropertyENS_9StringRefE",
+                    "__ZN4llvm15OpenMPIRBuilder25getOpenMPDefaultSimdAlignERKNS_6TripleERKNS_9StringMapIbNS_15MallocAllocatorEEE",
                     "__ZN4llvm3omp20getDirectiveCategoryENS0_9DirectiveE",
                     "__ZN4llvm3omp23getDirectiveAssociationENS0_9DirectiveE",
                     "__ZN4llvm3omp23getLeafConstructsOrSelfENS0_9DirectiveE",
