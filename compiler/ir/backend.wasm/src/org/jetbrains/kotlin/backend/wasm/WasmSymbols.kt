@@ -58,7 +58,7 @@ class WasmSymbols(
         val kClassInterfaceImpl: IrClassSymbol = getInternalClass("KClassInterfaceImpl")
         val isSupportedInterface = getInternalFunction("isSupportedInterface")
         val getInterfaceVTable = getInternalFunction("getInterfaceVTable")
-        val getInterfaceVTableBodyImpl = getInternalFunction("getInterfaceVTableBodyImpl")
+        val wasmGetInterfaceVTableBodyImpl = getInternalFunction("wasmGetInterfaceVTableBodyImpl")
     }
 
     internal val reflectionSymbols: WasmReflectionSymbols = WasmReflectionSymbols()

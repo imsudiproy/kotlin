@@ -875,7 +875,7 @@ class BodyGenerator(
                 body.buildStructGet(wasmFileCodegenContext.rttiType, rttiToSuperTypeId, location)
             }
 
-            wasmSymbols.reflectionSymbols.getInterfaceVTableBodyImpl -> {
+            wasmSymbols.reflectionSymbols.wasmGetInterfaceVTableBodyImpl -> {
                 //This is implementation of getInterfaceVTable, so argument locals could be used from the call-site
                 //obj.interfacesArray
                 body.buildGetLocal(functionContext.referenceLocal(0), location) //obj

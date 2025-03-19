@@ -40,11 +40,11 @@ internal fun isSupportedInterface(obj: Any, interfaceId: Long): Boolean {
 }
 
 internal fun getInterfaceVTable(obj: Any, interfaceId: Long): kotlin.wasm.internal.reftypes.anyref =
-    getInterfaceVTableBodyImpl()
+    wasmGetInterfaceVTableBodyImpl()
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
-internal fun getInterfaceVTableBodyImpl(): kotlin.wasm.internal.reftypes.anyref =
+internal fun wasmGetInterfaceVTableBodyImpl(): kotlin.wasm.internal.reftypes.anyref =
     implementedAsIntrinsic
 
 internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteral(
