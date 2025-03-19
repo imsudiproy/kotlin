@@ -222,14 +222,14 @@ class WasmCompiledModuleFragment(
     }
 
     private fun createRttiTypeAndProcessRttiGlobals(globals: MutableList<WasmGlobal>, additionalTypes: MutableList<WasmTypeDeclaration>) {
-        val wasmIntArray = WasmArrayDeclaration("LongArray", WasmStructFieldDeclaration("Long", WasmI64, false))
-        additionalTypes.add(wasmIntArray)
+        val wasmLongArray = WasmArrayDeclaration("LongArray", WasmStructFieldDeclaration("Long", WasmI64, false))
+        additionalTypes.add(wasmLongArray)
 
         val rttiTypeDeclarationSymbol = WasmSymbol<WasmStructDeclaration>()
         val rttiTypeDeclaration = WasmStructDeclaration(
             name = "RTTI",
             fields = listOf(
-                WasmStructFieldDeclaration("supportedIFaces", WasmRefNullType(WasmHeapType.Type(WasmSymbol(wasmIntArray))), false),
+                WasmStructFieldDeclaration("supportedIFaces", WasmRefNullType(WasmHeapType.Type(WasmSymbol(wasmLongArray))), false),
                 WasmStructFieldDeclaration("superClassRtti", WasmRefNullType(WasmHeapType.Type(rttiTypeDeclarationSymbol)), false),
                 WasmStructFieldDeclaration("packageNameAddress", WasmI32, false),
                 WasmStructFieldDeclaration("packageNameLength", WasmI32, false),
