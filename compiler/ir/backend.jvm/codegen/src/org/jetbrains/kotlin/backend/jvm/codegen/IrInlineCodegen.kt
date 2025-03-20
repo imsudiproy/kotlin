@@ -77,13 +77,13 @@ class IrInlineCodegen(
     ) {
         var nodeAndSmap: SMAPAndMethodNode? = null
         try {
-            nodeAndSmap = sourceCompiler.compileInlineFunction(jvmSignature).apply<SMAPAndMethodNode> {
+            nodeAndSmap = sourceCompiler.compileInlineFunction(jvmSignature).apply {
                 node.preprocessSuspendMarkers(forInline = true, keepFakeContinuation = false)
             }
             val result = inlineCall(nodeAndSmap, function.isInlineOnly())
             leaveTemps()
-            this.codegen.propagateChildReifiedTypeParametersUsages(result.reifiedTypeParametersUsages)
-            this.codegen.markLineNumberAfterInlineIfNeeded(isInsideIfCondition)
+            codegen.propagateChildReifiedTypeParametersUsages(result.reifiedTypeParametersUsages)
+            codegen.markLineNumberAfterInlineIfNeeded(isInsideIfCondition)
             state.factory.removeClasses(result.calcClassesToRemove())
         } catch (e: CompilationException) {
             throw e
