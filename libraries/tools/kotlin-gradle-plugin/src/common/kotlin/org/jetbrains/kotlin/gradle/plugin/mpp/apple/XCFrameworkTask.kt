@@ -103,7 +103,9 @@ class XCFrameworkConfig {
                             fatTask.from(framework)
 
                             resourcesPublicationExtension?.let {
-                                fatTask.inputResourceFiles.from(it.resolveResources(framework.target))
+                                if (it.canResolveResources(framework.target)) {
+                                    fatTask.inputResourceFiles.from(it.resolveResources(framework.target))
+                                }
                             }
                         }
                     }
@@ -233,8 +235,10 @@ internal constructor(
             project.multiplatformExtension.resourcesPublicationExtension?.run {
                 framework.linkTaskProvider.get().also { task ->
                     task.doLast {
-                        fileOperations.copy {
-                            it.from(resolveResources(framework.target)).into(task.outputFile)
+                        if (canResolveResources(framework.target)) {
+                            fileOperations.copy {
+                                it.from(resolveResources(framework.target)).into(task.outputFile)
+                            }
                         }
                     }
                 }
