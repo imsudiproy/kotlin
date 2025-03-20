@@ -236,6 +236,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.cttz.*",
         "llvm.dbg.*",
         "llvm.eh.typeid.for",
+        "llvm.eh.typeid.for.p0",
         "llvm.exp.*",
         "llvm.experimental.noalias.scope.decl",
         "llvm.fabs.*",
