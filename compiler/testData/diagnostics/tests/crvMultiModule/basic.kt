@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // WITH_STDLIB
+// FIR_DUMP
 
 // MODULE: lib1
 
@@ -13,7 +14,7 @@ fun toplvl(): String = ""
 fun foo(): String {
     <!RETURN_VALUE_NOT_USED!>Lib()<!>
     <!RETURN_VALUE_NOT_USED!>Lib().getStuff()<!>
-    toplvl()
+    <!RETURN_VALUE_NOT_USED!>toplvl()<!>
     return Lib().getStuff()
 }
 
@@ -24,8 +25,8 @@ fun foo(): String {
 fun bar(): String {
     <!RETURN_VALUE_NOT_USED!>Lib()<!>
     <!RETURN_VALUE_NOT_USED!>Lib().getStuff()<!>
-    foo()
-    toplvl()
+    <!RETURN_VALUE_NOT_USED!>foo()<!>
+    <!RETURN_VALUE_NOT_USED!>toplvl()<!>
     return foo()
 }
 

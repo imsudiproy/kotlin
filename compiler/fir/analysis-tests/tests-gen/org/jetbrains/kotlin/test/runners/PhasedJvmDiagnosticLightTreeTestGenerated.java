@@ -9269,6 +9269,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       public void testBasic() {
         runTest("compiler/testData/diagnostics/tests/crvMultiModule/basic.kt");
       }
+
+      @Test
+      @TestMetadata("nestedClasses.kt")
+      public void testNestedClasses() {
+        runTest("compiler/testData/diagnostics/tests/crvMultiModule/nestedClasses.kt");
+      }
     }
 
     @Nested

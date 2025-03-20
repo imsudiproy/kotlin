@@ -152,8 +152,9 @@ private class FirAdditionalAnnotationsPlacementTransformer(
     override fun visitRegularClass(regularClass: FirRegularClass) {
         if (!isEnabled) return
         regularClass.replaceAnnotations(regularClass.symbol.addMustUseValueAnnotation(regularClass.annotations))
-//        regularClass.acceptChildren(this) // TODO: differentiate between nested classes and functions, because we don't want to place
-        // annotations on non-top-level functions
+        // TODO: think about anonymous objects and type aliases
+        // We do not have to place annotations on functions again, if they're not top-level
+        regularClass.declarations.filterIsInstance<FirRegularClass>().forEach { it.accept(this) }
     }
 
     val mustUseReturnValueClassId = StandardClassIds.Annotations.MustUseReturnValue
@@ -165,7 +166,7 @@ private class FirAdditionalAnnotationsPlacementTransformer(
         if (existingAnnotations.any(FirAnnotation::isMustUseReturnValue)) return existingAnnotations
 
         val mustUseValueSymbol = session.symbolProvider.getClassLikeSymbolByClassId(mustUseReturnValueClassId) ?: return existingAnnotations
-        val mustUseValueClassSymbol = mustUseValueSymbol as? FirRegularClassSymbol  ?: return existingAnnotations
+        val mustUseValueClassSymbol = mustUseValueSymbol as? FirRegularClassSymbol ?: return existingAnnotations
         val mustUseValueCtor = mustUseValueClassSymbol.declarationSymbols.firstIsInstanceOrNull<FirConstructorSymbol>() ?: return existingAnnotations
 
         val annCall = buildAnnotationCall {
@@ -192,7 +193,9 @@ abstract class AbstractFirCompilerRequiredAnnotationsResolveTransformer(
     abstract val annotationTransformer: AbstractFirSpecificAnnotationResolveTransformer
     private val importTransformer = FirPartialImportResolveTransformer(session, computationSession)
     private val additionalAnnotationPlacementTransformer = FirAdditionalAnnotationsPlacementTransformer(
-        session, true
+        session, session.languageVersionSettings.getFlag(
+            AnalysisFlags.returnValueCheckerMode
+        ) == ReturnValueCheckerMode.FULL
     )
 
     val extensionService: FirExtensionService = session.extensionService
