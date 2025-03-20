@@ -144,10 +144,16 @@ private class FirAdditionalAnnotationsPlacementTransformer(
         file.acceptChildren(this)
     }
 
+    override fun visitSimpleFunction(simpleFunction: FirSimpleFunction) {
+        if (!isEnabled) return
+        simpleFunction.replaceAnnotations(simpleFunction.symbol.addMustUseValueAnnotation(simpleFunction.annotations))
+    }
+
     override fun visitRegularClass(regularClass: FirRegularClass) {
         if (!isEnabled) return
         regularClass.replaceAnnotations(regularClass.symbol.addMustUseValueAnnotation(regularClass.annotations))
-        regularClass.acceptChildren(this)
+//        regularClass.acceptChildren(this) // TODO: differentiate between nested classes and functions, because we don't want to place
+        // annotations on non-top-level functions
     }
 
     val mustUseReturnValueClassId = StandardClassIds.Annotations.MustUseReturnValue
@@ -186,9 +192,7 @@ abstract class AbstractFirCompilerRequiredAnnotationsResolveTransformer(
     abstract val annotationTransformer: AbstractFirSpecificAnnotationResolveTransformer
     private val importTransformer = FirPartialImportResolveTransformer(session, computationSession)
     private val additionalAnnotationPlacementTransformer = FirAdditionalAnnotationsPlacementTransformer(
-        session, session.languageVersionSettings.getFlag(
-            AnalysisFlags.returnValueCheckerMode
-        ) == ReturnValueCheckerMode.FULL
+        session, true
     )
 
     val extensionService: FirExtensionService = session.extensionService

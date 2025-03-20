@@ -24,8 +24,8 @@ fun foo(): String {
 fun bar(): String {
     <!RETURN_VALUE_NOT_USED!>Lib()<!>
     <!RETURN_VALUE_NOT_USED!>Lib().getStuff()<!>
-    foo()
-    toplvl()
+    <!RETURN_VALUE_NOT_USED!>foo()<!>
+    <!RETURN_VALUE_NOT_USED!>toplvl()<!>
     return foo()
 }
 

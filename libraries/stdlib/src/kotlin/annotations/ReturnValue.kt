@@ -28,7 +28,7 @@ public annotation class IgnorableReturnValue
  * This annotation only makes sense when used together with 'Return value checker' feature.
  * Placing it without enabling the corresponding feature would result in a compiler error.
  */
-@Target(AnnotationTarget.FILE, AnnotationTarget.CLASS)
+@Target(AnnotationTarget.FILE, AnnotationTarget.CLASS, AnnotationTarget.FUNCTION)
 @Suppress("NEWER_VERSION_IN_SINCE_KOTLIN") // KT-75337
 @SinceKotlin("2.2")
 public annotation class MustUseReturnValue

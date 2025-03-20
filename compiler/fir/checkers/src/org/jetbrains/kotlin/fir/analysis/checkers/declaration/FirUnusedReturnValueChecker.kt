@@ -142,10 +142,8 @@ private fun FirCallableSymbol<*>.isSubjectToCheck(session: FirSession): Boolean 
     if (this.callableId.packageName.asString() == "kotlin") return true
     callableId.ifMappedTypeCollection { return it }
 
-    val classOrFile = getContainingSymbol(session)
-    println("classOrFile = $classOrFile for $callableId") // <- Here, top-level declarations from other modules do not have containing files.
-    classOrFile ?: return false
-    return classOrFile.annotations.any { it.isMustUseReturnValue(session) }
+    val relevantAnnotations = getContainingSymbol(session)?.annotations ?: annotations
+    return relevantAnnotations.any { it.isMustUseReturnValue(session) }
 }
 
 // TODO: after kotlin.collections package will be bootstrapped and @MustUseReturnValue-annotated,
