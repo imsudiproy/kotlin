@@ -4312,13 +4312,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val packageName: String
     }
 
-    interface JvmDefaultInDeclaration : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = JvmDefaultInDeclaration::class
-        val annotation: String
+    interface JvmDefaultWithoutCompatibilityNotInEnableMode : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JvmDefaultWithoutCompatibilityNotInEnableMode::class
     }
 
-    interface JvmDefaultWithCompatibilityInDeclaration : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = JvmDefaultWithCompatibilityInDeclaration::class
+    interface JvmDefaultWithCompatibilityNotInNoCompatibilityMode : KaFirDiagnostic<KtElement> {
+        override val diagnosticClass get() = JvmDefaultWithCompatibilityNotInNoCompatibilityMode::class
     }
 
     interface JvmDefaultWithCompatibilityNotOnInterface : KaFirDiagnostic<KtElement> {
