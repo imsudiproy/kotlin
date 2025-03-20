@@ -10,17 +10,21 @@ import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.KotlinTargetResourcesPublication
+import org.jetbrains.kotlin.gradle.plugin.mpp.resources.resourcesPublicationExtension
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.existsCompat
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -69,9 +73,11 @@ internal class XCFrameworkTaskHolder(
 @KotlinGradlePluginPublicDsl
 class XCFrameworkConfig {
     private val taskHolders: List<XCFrameworkTaskHolder>
+    private val resourcesPublicationExtension: KotlinTargetResourcesPublication?
 
     constructor(project: Project, xcFrameworkName: String, buildTypes: Set<NativeBuildType>) {
         val parentTask = project.parentAssembleXCFrameworkTask(xcFrameworkName)
+        resourcesPublicationExtension = project.multiplatformExtension.resourcesPublicationExtension
         taskHolders = buildTypes.map { buildType ->
             XCFrameworkTaskHolder.create(project, xcFrameworkName, buildType).also {
                 parentTask.dependsOn(it.task)
@@ -95,6 +101,10 @@ class XCFrameworkConfig {
                         holder.fatTasks[appleTarget]?.configure { fatTask ->
                             fatTask.baseName = framework.baseName //all frameworks should have same names
                             fatTask.from(framework)
+
+                            resourcesPublicationExtension?.let {
+                                fatTask.inputResourceFiles.from(it.resolveResources(framework.target))
+                            }
                         }
                     }
             }
@@ -159,6 +169,7 @@ abstract class XCFrameworkTask
 internal constructor(
     private val execOperations: ExecOperations,
     private val projectLayout: ProjectLayout,
+    private val fileOperations: FileSystemOperations,
 ) : DefaultTask(), UsesKotlinToolingDiagnostics {
     init {
         onlyIf { HostManager.hostIsMac }
@@ -218,6 +229,17 @@ internal constructor(
             require(framework.konanTarget.family.isAppleFamily) {
                 "XCFramework supports Apple frameworks only"
             }
+
+            project.multiplatformExtension.resourcesPublicationExtension?.run {
+                framework.linkTaskProvider.get().also { task ->
+                    task.doLast {
+                        fileOperations.copy {
+                            it.from(resolveResources(framework.target)).into(task.outputFile)
+                        }
+                    }
+                }
+            }
+
             dependsOn(framework.linkTaskProvider)
         }
         fromFrameworkDescriptors(frameworks.map { FrameworkDescriptor(it) })
@@ -258,8 +280,9 @@ internal constructor(
         val rawXcfName = baseName.get()
         val name = frameworks.first().name
         if (frameworks.any { it.name != name }) {
-            error("All inner frameworks in XCFramework '$rawXcfName' should have same names!" +
-                          frameworks.joinToString("\n") { it.file.path })
+            error(
+                "All inner frameworks in XCFramework '$rawXcfName' should have same names!" +
+                        frameworks.joinToString("\n") { it.file.path })
         }
         if (name != xcfName) {
             toolingDiagnosticsCollector.get().report(
