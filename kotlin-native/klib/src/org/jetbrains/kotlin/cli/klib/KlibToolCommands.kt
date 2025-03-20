@@ -188,7 +188,6 @@ internal class DumpIr(output: KlibToolOutput, args: KlibToolArguments) : KlibToo
 
         val dumpOptions = DumpIrTreeOptions(
             printSignatures = true,
-            guessTypeBySignatureOfUnboundClassifierSymbol = true,
             referenceRenderingStrategy = DumpIrReferenceRenderingAsSignatureStrategy(KonanManglerIr)
         )
 
