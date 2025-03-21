@@ -626,7 +626,7 @@ private sealed class Bridge(
         }
 
         override val inSwiftSources = object : InSwiftSourcesConversion {
-            override fun renderNil(): String = ".none"
+            override fun renderNil(): String = "nil"
 
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = "${valueExpression}.__externalRCRef()"
 
