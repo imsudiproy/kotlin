@@ -28,8 +28,6 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ArrayLiteralPosition
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode.ContextIndependent
 import org.jetbrains.kotlin.fir.resolve.calls.ConeResolutionAtom
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitDispatchReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InaccessibleImplicitReceiverValue
@@ -216,20 +214,24 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
         }
 
+        return result.addSmartcastIfNeeded(data)
+    }
+
+    private fun FirExpression.addSmartcastIfNeeded(resolutionMode: ResolutionMode): FirExpression {
         // If we're resolving the LHS of an assignment, skip DFA to prevent the access being treated as a variable read and
         // smart-casts being applied.
-        if (data !is ResolutionMode.AssignmentLValue) {
-            when (result) {
-                is FirQualifiedAccessExpression -> dataFlowAnalyzer.exitQualifiedAccessExpression(result)
-                is FirResolvedQualifier -> dataFlowAnalyzer.exitResolvedQualifierNode(result)
-                else -> return result
+        if (resolutionMode !is ResolutionMode.AssignmentLValue) {
+            when (this) {
+                is FirQualifiedAccessExpression -> dataFlowAnalyzer.exitQualifiedAccessExpression(this)
+                is FirResolvedQualifier -> dataFlowAnalyzer.exitResolvedQualifierNode(this)
+                else -> return this
             }
-            result = components.transformExpressionUsingSmartcastInfo(result)
-            if (result is FirSmartCastExpression) {
-                dataFlowAnalyzer.exitSmartCastExpression(result)
+            return components.transformExpressionUsingSmartcastInfo(this).also {
+                if (it is FirSmartCastExpression) {
+                    dataFlowAnalyzer.exitSmartCastExpression(it)
+                }
             }
-        }
-        return result
+        } else return this
     }
 
     override fun transformQualifiedErrorAccessExpression(qualifiedErrorAccessExpression: FirQualifiedErrorAccessExpression, data: ResolutionMode): FirStatement {
@@ -269,7 +271,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 this, resolutionMode, isUsedAsReceiver = true, isUsedAsGetClassReceiver = isUsedAsGetClassReceiver
             )
             else -> transformSingle(this@FirExpressionsResolveTransformer, resolutionMode)
-        }
+        }.addSmartcastIfNeeded(resolutionMode)
     }
 
     override fun transformPropertyAccessExpression(
@@ -631,7 +633,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                         ResolutionMode.WithExpectedType(
                             it.toFirResolvedTypeRef(),
                             forceFullCompletion = false,
-                            arrayLiteralPosition = ArrayLiteralPosition.AnnotationArgument,
+                            arrayLiteralPosition = ResolutionMode.ArrayLiteralPosition.AnnotationArgument,
                         )
                     } ?: ResolutionMode.ContextDependent
 
@@ -724,7 +726,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 }
 
                 override fun visitAnnotation(annotation: FirAnnotation) {
-                    annotation.transformSingle(transformer, ContextIndependent)
+                    annotation.transformSingle(transformer, ResolutionMode.ContextIndependent)
                 }
 
                 override fun visitAnnotationCall(annotationCall: FirAnnotationCall) {
