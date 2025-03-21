@@ -77,7 +77,10 @@ abstract class CompilerTestsExtension(private val project: Project) {
 
     fun testData(isolatedProject: IsolatedProject, relativePath: String) {
         val testDataDirectory = isolatedProject.projectDirectory.dir(relativePath).asFile
-        testDataMap.put(testDataDirectory.relativeTo(project.rootDir).path, testDataDirectory.relativeTo(project.projectDir).path)
+        testDataMap.put(
+            testDataDirectory.relativeTo(project.rootDir).path.replace("\\", "/"),
+            testDataDirectory.relativeTo(project.projectDir).path.replace("\\", "/")
+        )
     }
 
     fun withStdlibCommon() {
