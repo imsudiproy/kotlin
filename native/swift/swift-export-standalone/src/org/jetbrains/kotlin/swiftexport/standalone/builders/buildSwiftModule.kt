@@ -139,4 +139,4 @@ private fun KtModuleProviderBuilder.inputModuleIntoKaLibraryModule(
     }
 )
 
-public inline fun <K> Map<out K, *>.forEachKey(action: (K) -> Unit) = keys.forEach(action)
+private inline fun <K> Map<out K, *>.forEachKey(action: (K) -> Unit) = keys.forEach(action)
