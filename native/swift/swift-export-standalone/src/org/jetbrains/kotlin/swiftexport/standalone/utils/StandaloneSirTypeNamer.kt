@@ -48,7 +48,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
 
             SirSwiftModule.utf16CodeUnit -> "Char"
 
-            SirSwiftModule.uint -> "kotlin.native.internal.NativePtr"
+            SirSwiftModule.unsafeMutableRawPointer -> "kotlin.native.internal.NativePtr"
 
             SirSwiftModule.void -> "Void"
             SirSwiftModule.never -> "Nothing"

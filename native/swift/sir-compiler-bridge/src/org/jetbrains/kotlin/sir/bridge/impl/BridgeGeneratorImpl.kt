@@ -245,7 +245,7 @@ private fun FunctionBridgeRequest.descriptor(typeNamer: SirTypeNamer): BridgeFun
     )
 }
 
-private val obj = BridgeParameter("__kt", bridgeType(SirNominalType(SirSwiftModule.uint)))
+private val obj = BridgeParameter("__kt", bridgeType(SirNominalType(SirSwiftModule.unsafeMutableRawPointer)))
 
 private fun FunctionBridgeRequest.allocationDescriptor(typeNamer: SirTypeNamer): BridgeFunctionDescriptor {
     require(callable is SirInit) { "Use descriptor instead" }
@@ -421,7 +421,7 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
         SirSwiftModule.double -> Bridge.AsIs(type, KotlinType.Double, CType.Double)
         SirSwiftModule.float -> Bridge.AsIs(type, KotlinType.Float, CType.Float)
 
-        SirSwiftModule.uint -> Bridge.AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
+        SirSwiftModule.unsafeMutableRawPointer -> Bridge.AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
         SirSwiftModule.never -> Bridge.AsOpaqueObject(type, KotlinType.KotlinObject, CType.Void)
 
         SirSwiftModule.string -> Bridge.AsObjCBridged(type, CType.NSString)

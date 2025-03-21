@@ -71,14 +71,14 @@ public extension ExportedKotlinPackages.kotlin {
         ) {
             let __kt = kotlin_Exception_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? .none)
+            kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
             let __kt = kotlin_Exception_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? .none)
+            kotlin_Exception_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         package override init(
             __externalRCRef: Swift.UnsafeMutableRawPointer?
@@ -105,14 +105,14 @@ public extension ExportedKotlinPackages.kotlin {
         ) {
             let __kt = kotlin_RuntimeException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? .none)
+            kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
             let __kt = kotlin_RuntimeException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? .none)
+            kotlin_RuntimeException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         package override init(
             __externalRCRef: Swift.UnsafeMutableRawPointer?
@@ -139,14 +139,14 @@ public extension ExportedKotlinPackages.kotlin {
         ) {
             let __kt = kotlin_IllegalArgumentException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? .none)
+            kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         public override init(
             cause: ExportedKotlinPackages.kotlin.Throwable?
         ) {
             let __kt = kotlin_IllegalArgumentException_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? .none)
+            kotlin_IllegalArgumentException_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         package override init(
             __externalRCRef: Swift.UnsafeMutableRawPointer?
@@ -162,7 +162,7 @@ public extension ExportedKotlinPackages.kotlin {
         }
         open var cause: ExportedKotlinPackages.kotlin.Throwable? {
             get {
-                return { switch kotlin_Throwable_cause_get(self.__externalRCRef()) { case .none: .none; case let res: ExportedKotlinPackages.kotlin.Throwable(__externalRCRef: res); } }()
+                return { switch kotlin_Throwable_cause_get(self.__externalRCRef()) { case nil: .none; case let res: ExportedKotlinPackages.kotlin.Throwable(__externalRCRef: res); } }()
             }
         }
         public final func getStackTrace() -> Swift.Never {
@@ -180,7 +180,7 @@ public extension ExportedKotlinPackages.kotlin {
         ) {
             let __kt = kotlin_Throwable_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? .none)
+            kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_Swift_String__Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, message ?? nil, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         public init(
             message: Swift.String?
@@ -194,7 +194,7 @@ public extension ExportedKotlinPackages.kotlin {
         ) {
             let __kt = kotlin_Throwable_init_allocate()
             super.init(__externalRCRef: __kt)
-            kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? .none)
+            kotlin_Throwable_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_ExportedKotlinPackages_kotlin_Throwable___(__kt, cause.map { it in it.__externalRCRef() } ?? nil)
         }
         public override init() {
             let __kt = kotlin_Throwable_init_allocate()
