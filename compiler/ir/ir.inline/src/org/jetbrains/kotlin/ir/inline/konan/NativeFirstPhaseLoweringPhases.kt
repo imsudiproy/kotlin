@@ -29,8 +29,10 @@ private val assertionWrapperPhase = makeIrModulePhase(
 fun nativeLoweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings,
 ): List<NamedCompilerPhase<PreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs)) {
+        this += upgradeCallableReferencesPhase
+    }
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
-        this += upgradeCallableReferencesPhase // TODO: create a separate language feature to upgrade callable references
         this += assertionWrapperPhase
         this += loweringsOfTheFirstPhase(KonanManglerIr, languageVersionSettings)
     }

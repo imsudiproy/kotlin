@@ -731,8 +731,10 @@ val mainFunctionCallWrapperLowering = makeIrModulePhase<JsIrBackendContext>(
 fun jsLoweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings,
 ): List<NamedCompilerPhase<JsPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs)) {
+        this += upgradeCallableReferences
+    }
     if (languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)) {
-        this += upgradeCallableReferences // TODO: create a separate language feature to upgrade callable references
         this += jsCodeOutliningPhaseOnFirstStage
         this += loweringsOfTheFirstPhase(JsManglerIr, languageVersionSettings)
     }

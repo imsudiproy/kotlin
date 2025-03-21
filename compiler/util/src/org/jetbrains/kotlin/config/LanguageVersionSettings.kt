@@ -390,6 +390,7 @@ enum class LanguageFeature(
     WhenGuards(KOTLIN_2_2, kind = OTHER), // KT-13626
     MultiDollarInterpolation(KOTLIN_2_2, kind = OTHER), // KT-2425
     JvmDefaultEnableByDefault(KOTLIN_2_2, kind = OTHER), // KT-71768
+    IrRichCallableReferencesInKlibs(KOTLIN_2_2, kind = OTHER), // KT-72734, KT-74384, KT-74392
 
     // 2.3
 
