@@ -964,7 +964,7 @@ private sealed class Bridge(
                 }
 
                 override fun renderNil(): String {
-                    return ".none"
+                    return "nil"
                 }
             }
     }
