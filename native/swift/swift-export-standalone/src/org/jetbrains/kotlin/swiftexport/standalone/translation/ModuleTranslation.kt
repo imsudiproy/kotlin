@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirModule
+import org.jetbrains.kotlin.sir.bridge.BridgeRequest
 import org.jetbrains.kotlin.sir.bridge.createBridgeGenerator
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
@@ -38,6 +39,7 @@ import kotlin.collections.contains
  */
 @OptIn(KaExperimentalApi::class)
 internal fun translateModulePublicApi(module: InputModule, kaModules: KaModules, config: SwiftExportConfig): TranslationResult {
+    val bridgeGenerator = createBridgeGenerator(StandaloneSirTypeNamer)
     // We access KaSymbols through all the module translation process. Since it is not correct to access them directly
     // outside of the session they were created, we create KaSession here.
     return analyze(kaModules.useSiteModule) {
@@ -50,7 +52,8 @@ internal fun translateModulePublicApi(module: InputModule, kaModules: KaModules,
         }
         val sirSession = buildSirSession(module.name, kaModules, config, module.config, stdlibReferenceHandler)
         val sirModule = translateModule(sirSession, kaModules.mainModules.single { it.libraryName == module.name })
-        createTranslationResult(sirSession, sirModule, config, module.config, referencedStdlibTypes)
+        val bridgeRequests = buildBridgeRequests(bridgeGenerator, sirModule)
+        createTranslationResult(sirSession, sirModule, config, module.config, referencedStdlibTypes, bridgeRequests)
     }
 }
 
@@ -72,6 +75,8 @@ internal fun translateModuleTransitiveClosure(module: InputModule, kaModules: Ka
         val sirSession = buildSirSession(module.name, kaModules, config, module.config, stdlibReferenceHandler)
         var inputQueue = names
         lateinit var sirModule: SirModule
+        val bridgeRequests = mutableListOf<BridgeRequest>()
+        val bridgeGenerator = createBridgeGenerator(StandaloneSirTypeNamer)
         do {
             sirModule = translateModule(sirSession, kaModules.mainModules.single { it.libraryName == module.name }) { scope ->
                 scope.classifiers
@@ -79,9 +84,10 @@ internal fun translateModuleTransitiveClosure(module: InputModule, kaModules: Ka
                     .filter { it.classId?.asSingleFqName() in inputQueue }
             }
             inputQueue = newlyReferencedTypes.toSet()
+            bridgeRequests += buildBridgeRequests(bridgeGenerator, sirModule)
             newlyReferencedTypes.clear()
         } while (inputQueue.isNotEmpty())
-        createTranslationResult(sirSession, sirModule, config, module.config, emptySet())
+        createTranslationResult(sirSession, sirModule, config, module.config, emptySet(), bridgeRequests.toList())
     }
 }
 
@@ -91,13 +97,14 @@ private fun KaSession.createTranslationResult(
     config: SwiftExportConfig,
     moduleConfig: SwiftModuleConfig,
     referencedStdlibTypes: Set<FqName>,
+    bridgeRequests: List<BridgeRequest>,
 ): TranslationResult {
     // Assume that parts of the KotlinRuntimeSupport and KotlinRuntime module are used.
     // It might not be the case, but precise tracking seems like an overkill at the moment.
     sirModule.updateImport(SirImport(config.runtimeSupportModuleName))
     sirModule.updateImport(SirImport(config.runtimeModuleName))
     val bridgesName = "${moduleConfig.bridgeModuleName}_${sirModule.name}"
-    val bridges = generateModuleBridges(sirModule, bridgesName)
+    val bridges = generateModuleBridges(sirModule, bridgesName, bridgeRequests)
     // Serialize SirModule to sources to avoid leakage of SirSession (and KaSession, likely) outside the analyze call.
     val swiftSourceCode = SirAsSwiftSourcesPrinter.print(
         sirModule,
@@ -123,11 +130,7 @@ private fun KaSession.createTranslationResult(
 /**
  * Generates method bodies for functions in [sirModule], as well as Kotlin and C [BridgeSources].
  */
-private fun KaSession.generateModuleBridges(sirModule: SirModule, bridgeModuleName: String): BridgeSources {
-    val bridgeGenerator = createBridgeGenerator(StandaloneSirTypeNamer)
-
-    // KT-68253: bridge generation could be better
-    val bridgeRequests = buildBridgeRequests(bridgeGenerator, sirModule)
+private fun KaSession.generateModuleBridges(sirModule: SirModule, bridgeModuleName: String, bridgeRequests: List<BridgeRequest>): BridgeSources {
     if (bridgeRequests.isNotEmpty()) {
         sirModule.updateImport(
             SirImport(
@@ -136,7 +139,7 @@ private fun KaSession.generateModuleBridges(sirModule: SirModule, bridgeModuleNa
             )
         )
     }
-    return generateBridgeSources(bridgeGenerator, bridgeRequests, true)
+    return generateBridgeSources(bridgeRequests, true)
 }
 
 internal class TranslationResult(
