@@ -153,7 +153,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                 add("super.init(__externalRCRef: ${obj.name})")
 
                 if (errorParameter != null) {
-                    add("var ${errorParameter.name}: UnsafeMutableRawPointer? = .none")
+                    add("var ${errorParameter.name}: UnsafeMutableRawPointer? = nil")
                     add(initDescriptor.swiftCall(typeNamer))
                     val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name)
                     add("guard ${errorParameter.name} == .none else { throw KotlinError(wrapped: $error) }")
