@@ -25,6 +25,10 @@ uintptr_t Foo_bar__TypesOfArguments__anyU20main_Foeble__(uintptr_t self, uintptr
 
 uintptr_t Foo_baz_get(uintptr_t self);
 
+uintptr_t SealedFoeble_SomeBarable_get();
+
+uintptr_t SealedFoeble_SomeFoeble_get();
+
 uintptr_t SiblingProtocol_NestedClass_NestedClass_init_allocate();
 
 void SiblingProtocol_NestedClass_NestedClass_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
@@ -42,6 +46,8 @@ uintptr_t __root___Foo_init_allocate();
 void __root___Foo_init_initialize__TypesOfArguments__Swift_UInt__(uintptr_t __kt);
 
 uintptr_t __root___MyObject_get();
+
+uintptr_t __root___SomeBazzable_get();
 
 void __root___foo__TypesOfArguments__anyU20main_ContainerProtocol__(uintptr_t receiver);
 
