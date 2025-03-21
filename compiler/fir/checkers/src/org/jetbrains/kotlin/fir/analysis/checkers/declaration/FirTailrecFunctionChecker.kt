@@ -103,7 +103,7 @@ object FirTailrecFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 // If exiting another function, then it means this call is inside a nested local function, in which case, it's not a tailrec call.
                 is FunctionExitNode -> return next.fir != tailrecFunction
                 is JumpNode, is BooleanOperatorExitNode, is WhenBranchResultExitNode, is WhenExitNode, is BlockExitNode,
-                is ExitSafeCallNode
+                is ExitSafeCallNode, is ElvisExitNode
                 -> next.hasMoreFollowingInstructions(tailrecFunction)
                 else -> return true
             }
