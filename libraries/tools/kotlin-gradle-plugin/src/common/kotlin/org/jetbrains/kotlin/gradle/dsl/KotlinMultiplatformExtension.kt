@@ -61,7 +61,6 @@ constructor(
 
     private val presetExtension = project.objects.newInstance(
         DefaultTargetsFromPresetExtension::class.java,
-        { this },
         targets,
         project,
     )
