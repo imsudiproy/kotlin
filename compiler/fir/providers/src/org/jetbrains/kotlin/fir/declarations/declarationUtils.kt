@@ -204,6 +204,7 @@ fun FirNamedFunctionSymbol.isEquals(session: FirSession): Boolean {
  *
  * @see org.jetbrains.kotlin.fir.scopes.impl.FirTypeIntersectionScopeContext.convertGroupedCallablesToIntersectionResults
  */
+@ScopeFunctionRequiresPrewarm
 fun MemberWithBaseScope<FirCallableSymbol<*>>.isTrivialIntersection(): Boolean {
     return baseScope
         .getDirectOverriddenMembersWithBaseScope(member)
@@ -211,6 +212,7 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.isTrivialIntersection(): Boolean {
         .mapTo(mutableSetOf()) { it.member.unwrapSubstitutionOverrides() }.size == 1
 }
 
+@ScopeFunctionRequiresPrewarm
 fun FirIntersectionCallableSymbol.getNonSubsumedOverriddenSymbols(
     session: FirSession,
     scopeSession: ScopeSession,
@@ -221,6 +223,7 @@ fun FirIntersectionCallableSymbol.getNonSubsumedOverriddenSymbols(
     return MemberWithBaseScope(this, dispatchReceiverScope).getNonSubsumedOverriddenSymbols()
 }
 
+@ScopeFunctionRequiresPrewarm
 fun MemberWithBaseScope<FirCallableSymbol<*>>.getNonSubsumedOverriddenSymbols(): List<FirCallableSymbol<*>> {
     return flattenIntersectionsRecursively()
         .nonSubsumed()
@@ -228,6 +231,7 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.getNonSubsumedOverriddenSymbols():
         .map { it.member }
 }
 
+@ScopeFunctionRequiresPrewarm
 fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.getNonSubsumedNonPhantomOverriddenSymbols(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
     // It's crucial that we only unwrap phantom intersection overrides.
     // See comments in the following tests for explanation:
@@ -250,12 +254,14 @@ fun FirCallableSymbol<*>.dispatchReceiverScope(session: FirSession, scopeSession
     ) ?: FirTypeScope.Empty
 }
 
+@ScopeFunctionRequiresPrewarm
 fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenIntersectionsRecursively(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
     if (member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>().origin != FirDeclarationOrigin.IntersectionOverride) return listOf(this)
 
     return baseScope.getDirectOverriddenMembersWithBaseScope(member).flatMap { it.flattenIntersectionsRecursively() }
 }
 
+@ScopeFunctionRequiresPrewarm
 fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenPhantomIntersectionsRecursively(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
     val symbol = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
 
@@ -270,6 +276,7 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenPhantomIntersectionsRecursi
  * A callable declaration D [subsumes](https://kotlinlang.org/spec/inheritance.html#matching-and-subsumption-of-declarations)
  * a callable declaration B if D overrides B.
  */
+@ScopeFunctionRequiresPrewarm
 fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.nonSubsumed(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
     val baseMembers = mutableSetOf<FirCallableSymbol<*>>()
     for ((member, scope) in this) {
