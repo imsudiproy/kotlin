@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("compiler-tests-convention")
+    // id("compiler-tests-convention")
 }
 
 dependencies {
@@ -31,13 +31,14 @@ sourceSets {
 }
 
 testsJar()
-
+/*
 compilerTests {
-    testData("testData")
+    testData(isolated, "testData")
+    testData(project(":compiler").isolated, "testData/codegen")
     withScriptRuntime()
     withTestJar()
 }
-
+*/
 projectTest(parallel = true) {
     workingDir = rootDir
     useJUnitPlatform()
@@ -45,6 +46,11 @@ projectTest(parallel = true) {
     inputs.file(File(rootDir, "compiler/cli/cli-common/resources/META-INF/extensions/compiler.xml"))
         .withPathSensitivity(PathSensitivity.RELATIVE)
     inputs.file(File(rootDir, "compiler/testData/mockJDK/jre/lib/rt.jar")).withNormalizer(ClasspathNormalizer::class)
+    inputs.file(File(rootDir, "compiler/testData/mockJDK/jre/lib/annotations.jar")).withNormalizer(ClasspathNormalizer::class)
+    systemProperty(
+        "org.jetbrains.kotlin.test.mockJdkAnnotationsJar",
+        File(rootDir, "compiler/testData/mockJDK/jre/lib/annotations.jar").absolutePath
+    )
 }
 
 val generateSpecTests by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt")
