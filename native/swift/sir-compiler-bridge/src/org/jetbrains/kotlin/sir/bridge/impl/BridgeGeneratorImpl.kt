@@ -665,7 +665,7 @@ private sealed class Bridge(
         }
 
         override val inSwiftSources = object : NilableIdentityValueConversion {
-            override fun renderNil(): String = ".none"
+            override fun renderNil(): String = "nil"
         }
     }
 
