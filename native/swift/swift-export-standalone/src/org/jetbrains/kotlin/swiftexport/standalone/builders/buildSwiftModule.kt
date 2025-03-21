@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
+import kotlin.collections.LinkedHashMap
 
 internal fun buildSirSession(
     mainModuleName: String,
@@ -91,29 +92,34 @@ private fun extractAllTransitively(
  */
 internal class KaModules(
     val useSiteModule: KaModule,
-    val mainModules: List<KaLibraryModule>,
+    private val modulesToInputs: Map<KaLibraryModule, InputModule>,
     val platformLibraries: List<KaLibraryModule>,
-)
+) {
+    val inputsToModules: Map<InputModule, KaLibraryModule> = modulesToInputs.map { it.value to it.key }.toMap()
+    val mainModules: List<KaLibraryModule> = modulesToInputs.keys.toList()
+    fun configFor(module: KaLibraryModule): SwiftModuleConfig =
+        modulesToInputs[module]?.config ?: error("No config for module ${module.libraryName}")
+}
 
 internal fun createKaModulesForStandaloneAnalysis(
     inputs: Set<InputModule>,
     targetPlatform: TargetPlatform,
     platformLibraries: Set<InputModule>,
 ): KaModules {
-    lateinit var binaryModules: List<KaLibraryModule>
+    lateinit var binaryModules: Map<KaLibraryModule, InputModule>
     lateinit var fakeSourceModule: KaSourceModule
     var platformLibraryModules: List<KaLibraryModule> = emptyList()
     buildStandaloneAnalysisAPISession {
         buildKtModuleProvider {
             platform = targetPlatform
-            binaryModules = inputs.map { inputModuleIntoKaLibraryModule(it, targetPlatform) }
+            binaryModules = inputs.associate { inputModuleIntoKaLibraryModule(it, targetPlatform) to it }
             platformLibraryModules = platformLibraries.map { inputModuleIntoKaLibraryModule(it, targetPlatform) }
             // It's a pure hack: Analysis API does not properly work without root source modules.
             fakeSourceModule = addModule(
                 buildKtSourceModule {
                     platform = targetPlatform
                     moduleName = "fakeSourceModule"
-                    binaryModules.forEach(::addRegularDependency)
+                    binaryModules.forEachKey(::addRegularDependency)
                     platformLibraryModules.forEach(::addRegularDependency)
                 }
             )
@@ -132,3 +138,5 @@ private fun KtModuleProviderBuilder.inputModuleIntoKaLibraryModule(
         libraryName = input.name
     }
 )
+
+public inline fun <K> Map<out K, *>.forEachKey(action: (K) -> Unit) = keys.forEach(action)

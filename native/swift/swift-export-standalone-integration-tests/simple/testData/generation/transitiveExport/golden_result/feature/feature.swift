@@ -16,4 +16,16 @@ public extension ExportedKotlinPackages.oh.my.kotlin {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
+    public final class FeatureB: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public override init() {
+            let __kt = oh_my_kotlin_FeatureB_init_allocate()
+            super.init(__externalRCRef: __kt)
+            oh_my_kotlin_FeatureB_init_initialize__TypesOfArguments__Swift_UInt__(__kt)
+        }
+        package override init(
+            __externalRCRef: Swift.UInt
+        ) {
+            super.init(__externalRCRef: __externalRCRef)
+        }
+    }
 }

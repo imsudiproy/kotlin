@@ -1,3 +1,5 @@
+public enum foo {
+}
 public enum kotlin {
 }
 public enum oh {
