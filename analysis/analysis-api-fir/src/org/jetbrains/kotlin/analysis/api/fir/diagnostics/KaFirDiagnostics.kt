@@ -4320,10 +4320,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = JvmDefaultWithCompatibilityNotInNoCompatibilityMode::class
     }
 
-    interface JvmDefaultWithCompatibilityNotOnInterface : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = JvmDefaultWithCompatibilityNotOnInterface::class
-    }
-
     interface ExternalDeclarationCannotBeAbstract : KaFirDiagnostic<KtDeclaration> {
         override val diagnosticClass get() = ExternalDeclarationCannotBeAbstract::class
     }
