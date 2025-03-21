@@ -1,4 +1,4 @@
-description = "Kotlin Scripting JSR-223 support"
+description = "Kotlin Scripting JSR-223 support (Deprecated)"
 
 plugins {
     java
@@ -20,7 +20,9 @@ sourceSets {
     "test" {}
 }
 
-publish()
+publish {
+    artifactId += "-deprecated"
+}
 
 runtimeJar(rewriteDefaultJarDepsToShadedCompiler())
 sourcesJar()
