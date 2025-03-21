@@ -58,6 +58,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "_Znwm", // new
         "_Znwy", // operator new(unsigned long long)
         "_ZdlPv", // delete
+        "_ZdlPvm", // operator delete(void*, unsigned long)
         "_ZNSt3__16thread20hardware_concurrencyEv", // std::__1::thread::hardware_concurrency()
         "_ZNSt6thread20hardware_concurrencyEv", // std::thread::hardware_concurrency()
         "__mingw_vsnprintf",
