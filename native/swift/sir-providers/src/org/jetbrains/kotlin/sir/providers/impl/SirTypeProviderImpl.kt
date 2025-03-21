@@ -152,7 +152,6 @@ public class SirTypeProviderImpl(
         val symbol = type.symbol
         val fallbackType = SirUnsupportedType
         if (symbol.isReified) return fallbackType
-        if (symbol.variance != Variance.INVARIANT) return fallbackType
         return when (symbol.upperBounds.size) {
             0 -> SirNominalType(KotlinRuntimeModule.kotlinBase).optional()
             1 -> {
