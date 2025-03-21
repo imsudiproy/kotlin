@@ -154,7 +154,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
         parameters.add(
             SirParameter(
                 argumentName = "__externalRCRef",
-                type = SirNominalType(SirSwiftModule.uint)
+                type = SirNominalType(SirSwiftModule.uint).optional()
             )
         )
     }.also { it.parent = this }
