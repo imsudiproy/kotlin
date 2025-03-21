@@ -139,7 +139,7 @@ internal class BridgeGeneratorImpl(private val typeNamer: SirTypeNamer) : Bridge
                     add("var ${errorParameter.name}: UnsafeMutableRawPointer? = .none")
                     add("let _result = ${descriptor.swiftInvoke(typeNamer)}")
                     val error = errorParameter.bridge.inSwiftSources.kotlinToSwift(typeNamer, errorParameter.name)
-                    add("guard ${errorParameter.name} == .none else { throw KotlinError(wrapped: $error) }")
+                    add("guard ${errorParameter.name} == nil else { throw KotlinError(wrapped: $error) }")
                     add("return ${descriptor.returnType.inSwiftSources.kotlinToSwift(typeNamer, "_result")}")
                 } else {
                     add("return ${descriptor.swiftCall(typeNamer)}")
