@@ -31,6 +31,7 @@ void LLVMKotlinInitializeTargets() {
     INIT_LLVM_TARGET(ARM)
     INIT_LLVM_TARGET(Mips)
     INIT_LLVM_TARGET(X86)
+    INIT_LLVM_TARGET(s390x)
     INIT_LLVM_TARGET(WebAssembly)
 #elif KONAN_WINDOWS
     INIT_LLVM_TARGET(AArch64)
