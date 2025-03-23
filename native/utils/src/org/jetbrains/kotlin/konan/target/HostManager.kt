@@ -52,6 +52,7 @@ open class HostManager() {
         LINUX_X64,
         LINUX_ARM32_HFP,
         LINUX_ARM64,
+        LINUX_S390X,
         MINGW_X64,
         ANDROID_X86,
         ANDROID_X64,
@@ -77,6 +78,7 @@ open class HostManager() {
 
     val enabledByHost: Map<KonanTarget, Set<KonanTarget>> = mapOf(
         LINUX_X64 to commonTargets,
+        LINUX_S390X to commonTargets,
         MINGW_X64 to commonTargets,
         MACOS_X64 to commonTargets + appleTargets,
         MACOS_ARM64 to commonTargets + appleTargets
@@ -123,6 +125,7 @@ open class HostManager() {
                 MACOS_X64,
                 MACOS_ARM64 -> "darwin"
                 LINUX_X64 -> "linux"
+                LINUX_S390X -> "linux"
                 MINGW_X64 -> "win32"
                 else -> throw TargetSupportException("Unknown host: $host.")
             }
@@ -138,6 +141,7 @@ open class HostManager() {
         fun hostArchOrNull(): String? =
             when (System.getProperty("os.arch")) {
                 "x86_64" -> "x86_64"
+                "s390x" -> "s390x"
                 "amd64" -> "x86_64"
                 "arm64" -> "aarch64"
                 "aarch64" -> "aarch64"
@@ -148,6 +152,7 @@ open class HostManager() {
             Pair("osx", "x86_64") to MACOS_X64,
             Pair("osx", "aarch64") to MACOS_ARM64,
             Pair("linux", "x86_64") to LINUX_X64,
+            Paor("linux", "s390x") to LINUX_X64,
             Pair("windows", "x86_64") to MINGW_X64
         )
 
@@ -195,6 +200,7 @@ open class HostManager() {
 
         private val targetAliasResolutions = mapOf(
             "linux" to "linux_x64",
+            "linux" to "linux_s390x",
             "macbook" to "macos_x64",
             "macos" to "macos_x64",
             "imac" to "macos_x64",
