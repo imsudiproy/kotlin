@@ -1254,6 +1254,54 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("constructorDuplicatedContextParameter.kt")
+    public void testConstructorDuplicatedContextParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/constructorDuplicatedContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("constructorDuplicatedContextParameter2.kt")
+    public void testConstructorDuplicatedContextParameter2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/constructorDuplicatedContextParameter2.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationMemberFunction.kt")
+    public void testDanglingAnnotationMemberFunction() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationMemberFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationMemberFunction2.kt")
+    public void testDanglingAnnotationMemberFunction2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationMemberFunction2.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationMemberFunction3.kt")
+    public void testDanglingAnnotationMemberFunction3() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationMemberFunction3.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationTopLevelFunction.kt")
+    public void testDanglingAnnotationTopLevelFunction() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationTopLevelFunction.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationTopLevelFunction2.kt")
+    public void testDanglingAnnotationTopLevelFunction2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationTopLevelFunction2.kt");
+    }
+
+    @Test
+    @TestMetadata("danglingAnnotationTopLevelFunction3.kt")
+    public void testDanglingAnnotationTopLevelFunction3() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationTopLevelFunction3.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationWithNestedDeclarations.kt")
     public void testDanglingAnnotationWithNestedDeclarations() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/danglingAnnotationWithNestedDeclarations.kt");
@@ -1266,9 +1314,33 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("functionDuplicatedContextParameter.kt")
+    public void testFunctionDuplicatedContextParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/functionDuplicatedContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("functionDuplicatedContextParameter2.kt")
+    public void testFunctionDuplicatedContextParameter2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/functionDuplicatedContextParameter2.kt");
+    }
+
+    @Test
     @TestMetadata("parameterNoType.kt")
     public void testParameterNoType() {
       runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/parameterNoType.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyDuplicatedContextParameter.kt")
+    public void testPropertyDuplicatedContextParameter() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/propertyDuplicatedContextParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyDuplicatedContextParameter2.kt")
+    public void testPropertyDuplicatedContextParameter2() {
+      runTest("analysis/low-level-api-fir/testData/lazyResolve/errors/propertyDuplicatedContextParameter2.kt");
     }
   }
 

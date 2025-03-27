@@ -404,6 +404,7 @@ enum class LanguageFeature(
     ResolveTopLevelLambdasAsSyntheticCallArgument(KOTLIN_2_3, kind = OTHER), // KT-67869
     UnstableSmartcastOnDelegatedProperties(KOTLIN_2_3, kind = BUG_FIX), // KTLC-273
     ForbidAnnotationsWithUseSiteTargetOnExpressions(KOTLIN_2_3, kind = BUG_FIX), // KT-75242
+    ProhibitNullableTypeThroughTypealias(KOTLIN_2_3, kind = BUG_FIX), // KTLC-279
 
     // End of 2.* language features --------------------------------------------------
 
@@ -485,6 +486,7 @@ enum class LanguageFeature(
     AnnotationsInMetadata(sinceVersion = null, kind = OTHER), // KT-57919
     DisableWarningsForValueBasedJavaClasses(sinceVersion = null, kind = OTHER), // KT-70722
     DisableWarningsForIdentitySensitiveOperationsOnValueClassesAndPrimitives(sinceVersion = null, kind = OTHER), // KT-70722
+    IrRichCallableReferencesInKlibs(sinceVersion = null, kind = OTHER), // KT-72734, KT-74384, KT-74392
     ;
 
     init {

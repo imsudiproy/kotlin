@@ -1,7 +1,7 @@
 @_exported import ExportedKotlinPackages
-import KotlinRuntimeSupport
 import KotlinRuntime
 import stdlib
+import KotlinRuntimeSupport
 @_implementationOnly import KotlinBridges_KotlinSerialization
 
 public typealias `internal` = ExportedKotlinPackages.kotlinx.serialization.`internal`
@@ -10,7 +10,11 @@ public typealias descriptors = ExportedKotlinPackages.kotlinx.serialization.desc
 public typealias builtins = ExportedKotlinPackages.kotlinx.serialization.builtins
 public typealias encoding = ExportedKotlinPackages.kotlinx.serialization.encoding
 public typealias BinaryFormat = ExportedKotlinPackages.kotlinx.serialization.BinaryFormat
+public typealias ContextualSerializer = ExportedKotlinPackages.kotlinx.serialization.ContextualSerializer
+public typealias KSerializer = ExportedKotlinPackages.kotlinx.serialization.KSerializer
 public typealias MissingFieldException = ExportedKotlinPackages.kotlinx.serialization.MissingFieldException
+public typealias PolymorphicSerializer = ExportedKotlinPackages.kotlinx.serialization.PolymorphicSerializer
+public typealias SealedClassSerializer = ExportedKotlinPackages.kotlinx.serialization.SealedClassSerializer
 public typealias SerialFormat = ExportedKotlinPackages.kotlinx.serialization.SerialFormat
 public typealias SerializationException = ExportedKotlinPackages.kotlinx.serialization.SerializationException
 public typealias StringFormat = ExportedKotlinPackages.kotlinx.serialization.StringFormat
@@ -41,76 +45,76 @@ public final class _ExportedKotlinPackages_kotlinx_serialization_encoding_Compos
 }
 public func serializer(
     kClass: Swift.Never,
-    typeArgumentsSerializers: [Swift.Never],
+    typeArgumentsSerializers: [any ExportedKotlinPackages.kotlinx.serialization.KSerializer],
     isNullable: Swift.Bool
-) -> Swift.Never {
+) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
     ExportedKotlinPackages.kotlinx.serialization.serializer(kClass: kClass, typeArgumentsSerializers: typeArgumentsSerializers, isNullable: isNullable)
 }
 public func serializer(
     type: Swift.Never
-) -> Swift.Never {
+) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
     ExportedKotlinPackages.kotlinx.serialization.serializer(type: type)
 }
 public func serializer(
     _ receiver: Swift.Never
-) -> Swift.Never {
+) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
     ExportedKotlinPackages.kotlinx.serialization.serializer(receiver)
 }
 public func serializer(
     _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
     kClass: Swift.Never,
-    typeArgumentsSerializers: [Swift.Never],
+    typeArgumentsSerializers: [any ExportedKotlinPackages.kotlinx.serialization.KSerializer],
     isNullable: Swift.Bool
-) -> Swift.Never {
+) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
     ExportedKotlinPackages.kotlinx.serialization.serializer(receiver, kClass: kClass, typeArgumentsSerializers: typeArgumentsSerializers, isNullable: isNullable)
 }
 public func serializer(
     _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
     type: Swift.Never
-) -> Swift.Never {
+) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
     ExportedKotlinPackages.kotlinx.serialization.serializer(receiver, type: type)
 }
 public func serializerOrNull(
     type: Swift.Never
-) -> Swift.Never {
+) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
     ExportedKotlinPackages.kotlinx.serialization.serializerOrNull(type: type)
 }
 public func serializerOrNull(
     _ receiver: Swift.Never
-) -> Swift.Never {
+) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
     ExportedKotlinPackages.kotlinx.serialization.serializerOrNull(receiver)
 }
 public func serializerOrNull(
     _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
     type: Swift.Never
-) -> Swift.Never {
+) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
     ExportedKotlinPackages.kotlinx.serialization.serializerOrNull(receiver, type: type)
 }
 public func decodeFromHexString(
     _ receiver: any ExportedKotlinPackages.kotlinx.serialization.BinaryFormat,
     deserializer: Swift.Never,
     hex: Swift.String
-) -> Swift.Never {
+) -> KotlinRuntime.KotlinBase? {
     ExportedKotlinPackages.kotlinx.serialization.decodeFromHexString(receiver, deserializer: deserializer, hex: hex)
 }
 public func encodeToHexString(
     _ receiver: any ExportedKotlinPackages.kotlinx.serialization.BinaryFormat,
     serializer: Swift.Never,
-    value: Swift.Never
+    value: KotlinRuntime.KotlinBase?
 ) -> Swift.String {
     ExportedKotlinPackages.kotlinx.serialization.encodeToHexString(receiver, serializer: serializer, value: value)
 }
 public func findPolymorphicSerializer(
-    _ receiver: Swift.Never,
+    _ receiver: ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractPolymorphicSerializer,
     decoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder,
     klassName: Swift.String?
 ) -> Swift.Never {
     ExportedKotlinPackages.kotlinx.serialization.findPolymorphicSerializer(receiver, decoder: decoder, klassName: klassName)
 }
 public func findPolymorphicSerializer(
-    _ receiver: Swift.Never,
+    _ receiver: ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractPolymorphicSerializer,
     encoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
-    value: Swift.Never
+    value: KotlinRuntime.KotlinBase
 ) -> Swift.Never {
     ExportedKotlinPackages.kotlinx.serialization.findPolymorphicSerializer(receiver, encoder: encoder, value: value)
 }
@@ -119,11 +123,13 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         func decodeFromByteArray(
             deserializer: Swift.Never,
             bytes: ExportedKotlinPackages.kotlin.ByteArray
-        ) -> Swift.Never
+        ) -> KotlinRuntime.KotlinBase?
         func encodeToByteArray(
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> ExportedKotlinPackages.kotlin.ByteArray
+    }
+    public protocol KSerializer: KotlinRuntime.KotlinBase {
     }
     public protocol SerialFormat: KotlinRuntime.KotlinBase {
         var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
@@ -134,11 +140,13 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
         func decodeFromString(
             deserializer: Swift.Never,
             string: Swift.String
-        ) -> Swift.Never
+        ) -> KotlinRuntime.KotlinBase?
         func encodeToString(
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.String
+    }
+    public final class ContextualSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     }
     public final class MissingFieldException: ExportedKotlinPackages.kotlinx.serialization.SerializationException {
         public var missingFields: [Swift.String] {
@@ -177,6 +185,10 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
+    public final class PolymorphicSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractPolymorphicSerializer {
+    }
+    public final class SealedClassSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractPolymorphicSerializer {
+    }
     open class SerializationException: ExportedKotlinPackages.kotlin.IllegalArgumentException {
         public override init() {
             let __kt = kotlinx_serialization_SerializationException_init_allocate()
@@ -213,81 +225,119 @@ public extension ExportedKotlinPackages.kotlinx.serialization {
     }
     public static func serializer(
         kClass: Swift.Never,
-        typeArgumentsSerializers: [Swift.Never],
+        typeArgumentsSerializers: [any ExportedKotlinPackages.kotlinx.serialization.KSerializer],
         isNullable: Swift.Bool
-    ) -> Swift.Never {
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
         type: Swift.Never
-    ) -> Swift.Never {
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
         _ receiver: Swift.Never
-    ) -> Swift.Never {
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
         kClass: Swift.Never,
-        typeArgumentsSerializers: [Swift.Never],
+        typeArgumentsSerializers: [any ExportedKotlinPackages.kotlinx.serialization.KSerializer],
         isNullable: Swift.Bool
-    ) -> Swift.Never {
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
         type: Swift.Never
-    ) -> Swift.Never {
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializerOrNull(
         type: Swift.Never
-    ) -> Swift.Never {
+    ) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
         fatalError()
     }
     public static func serializerOrNull(
         _ receiver: Swift.Never
-    ) -> Swift.Never {
+    ) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
         fatalError()
     }
     public static func serializerOrNull(
         _ receiver: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule,
         type: Swift.Never
-    ) -> Swift.Never {
+    ) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
         fatalError()
     }
     public static func decodeFromHexString(
         _ receiver: any ExportedKotlinPackages.kotlinx.serialization.BinaryFormat,
         deserializer: Swift.Never,
         hex: Swift.String
-    ) -> Swift.Never {
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public static func encodeToHexString(
         _ receiver: any ExportedKotlinPackages.kotlinx.serialization.BinaryFormat,
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> Swift.String {
         fatalError()
     }
     public static func findPolymorphicSerializer(
-        _ receiver: Swift.Never,
+        _ receiver: ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractPolymorphicSerializer,
         decoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder,
         klassName: Swift.String?
     ) -> Swift.Never {
         fatalError()
     }
     public static func findPolymorphicSerializer(
-        _ receiver: Swift.Never,
+        _ receiver: ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractPolymorphicSerializer,
         encoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase
     ) -> Swift.Never {
         fatalError()
     }
 }
 public extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
+    public protocol GeneratedSerializer: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.KSerializer {
+    }
+    open class AbstractCollectionSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    open class AbstractPolymorphicSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class ArrayListSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.CollectionSerializer {
+    }
+    public final class BooleanArrayBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class BooleanArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.PrimitiveArraySerializer {
+    }
+    public final class BooleanSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class ByteArrayBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class ByteArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.PrimitiveArraySerializer {
+    }
+    public final class ByteSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class CharArrayBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class CharArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.PrimitiveArraySerializer {
+    }
+    public final class CharSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    open class CollectionLikeSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractCollectionSerializer {
+    }
+    open class CollectionSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.CollectionLikeSerializer {
+    }
+    public final class DoubleArrayBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class DoubleArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.PrimitiveArraySerializer {
+    }
+    public final class DoubleSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class DurationSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
     public final class ElementMarker: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public func mark(
             index: Swift.Int32
@@ -314,9 +364,95 @@ public extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
             super.init(__externalRCRef: __externalRCRef)
         }
     }
+    public final class EnumSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class FloatArrayBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class FloatArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.PrimitiveArraySerializer {
+    }
+    public final class FloatSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class HashMapSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.MapLikeSerializer {
+    }
+    public final class HashSetSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.CollectionSerializer {
+    }
+    public final class IntArrayBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class IntArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.PrimitiveArraySerializer {
+    }
+    public final class IntSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    open class KeyValueSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class LinkedHashMapSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.MapLikeSerializer {
+    }
+    public final class LinkedHashSetSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.CollectionSerializer {
+    }
+    public final class LongArrayBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class LongArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.PrimitiveArraySerializer {
+    }
+    public final class LongSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class MapEntrySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.KeyValueSerializer {
+    }
+    open class MapLikeSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.AbstractCollectionSerializer {
+    }
+    open class NamedValueDecoder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    open class NamedValueEncoder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class NothingSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class NullableSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class ObjectSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class PairSerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.KeyValueSerializer {
+    }
+    open class PrimitiveArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.CollectionLikeSerializer {
+    }
+    public final class ReferenceArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.CollectionLikeSerializer {
+    }
+    public final class ShortArrayBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class ShortArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.PrimitiveArraySerializer {
+    }
+    public final class ShortSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class StringSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class TripleSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class UByteArrayBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class UByteArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.PrimitiveArraySerializer {
+    }
+    public final class UByteSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class UIntArrayBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class UIntArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.PrimitiveArraySerializer {
+    }
+    public final class UIntSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class ULongArrayBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class ULongArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.PrimitiveArraySerializer {
+    }
+    public final class ULongSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class UShortArrayBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class UShortArraySerializer: ExportedKotlinPackages.kotlinx.serialization.`internal`.PrimitiveArraySerializer {
+    }
+    public final class UShortSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
+    public final class UnitSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
     public static func InlinePrimitiveDescriptor(
         name: Swift.String,
-        primitiveSerializer: Swift.Never
+        primitiveSerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
     ) -> any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
         fatalError()
     }
@@ -344,16 +480,16 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
     public protocol SerializersModuleCollector: KotlinRuntime.KotlinBase {
         func contextual(
             kClass: Swift.Never,
-            provider: @escaping (Swift.Array<Swift.Never>) -> Swift.Never
+            provider: @escaping (Swift.Array<any ExportedKotlinPackages.kotlinx.serialization.KSerializer>) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer
         ) -> Swift.Void
         func contextual(
             kClass: Swift.Never,
-            serializer: Swift.Never
+            serializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
         ) -> Swift.Void
         func polymorphic(
             baseClass: Swift.Never,
             actualClass: Swift.Never,
-            actualSerializer: Swift.Never
+            actualSerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
         ) -> Swift.Void
         @available(*, deprecated, message: "Deprecated in favor of function with more precise name: polymorphicDefaultDeserializer. Replacement: polymorphicDefaultDeserializer(baseClass, defaultDeserializerProvider)")
         func polymorphicDefault(
@@ -366,7 +502,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
         ) -> Swift.Void
         func polymorphicDefaultSerializer(
             baseClass: Swift.Never,
-            defaultSerializerProvider: @escaping (Swift.Never) -> Swift.Never
+            defaultSerializerProvider: @escaping (KotlinRuntime.KotlinBase) -> Swift.Never
         ) -> Swift.Void
     }
     open class SerializersModule: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
@@ -377,13 +513,13 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
         }
         open func getContextual(
             kClass: Swift.Never,
-            typeArgumentsSerializers: [Swift.Never]
-        ) -> Swift.Never {
+            typeArgumentsSerializers: [any ExportedKotlinPackages.kotlinx.serialization.KSerializer]
+        ) -> (any ExportedKotlinPackages.kotlinx.serialization.KSerializer)? {
             fatalError()
         }
         open func getPolymorphic(
             baseClass: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase
         ) -> Swift.Never {
             fatalError()
         }
@@ -405,13 +541,13 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
     public final class SerializersModuleBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector, KotlinRuntimeSupport._KotlinBridged {
         public func contextual(
             kClass: Swift.Never,
-            provider: @escaping (Swift.Array<Swift.Never>) -> Swift.Never
+            provider: @escaping (Swift.Array<any ExportedKotlinPackages.kotlinx.serialization.KSerializer>) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer
         ) -> Swift.Void {
             fatalError()
         }
         public func contextual(
             kClass: Swift.Never,
-            serializer: Swift.Never
+            serializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
         ) -> Swift.Void {
             fatalError()
         }
@@ -423,7 +559,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
         public func polymorphic(
             baseClass: Swift.Never,
             actualClass: Swift.Never,
-            actualSerializer: Swift.Never
+            actualSerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
         ) -> Swift.Void {
             fatalError()
         }
@@ -435,7 +571,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
         }
         public func polymorphicDefaultSerializer(
             baseClass: Swift.Never,
-            defaultSerializerProvider: @escaping (Swift.Never) -> Swift.Never
+            defaultSerializerProvider: @escaping (KotlinRuntime.KotlinBase) -> Swift.Never
         ) -> Swift.Void {
             fatalError()
         }
@@ -456,7 +592,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules {
     }
     public static func serializersModuleOf(
         kClass: Swift.Never,
-        serializer: Swift.Never
+        serializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
     ) -> ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
         fatalError()
     }
@@ -929,164 +1065,166 @@ public extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
     }
 }
 public extension ExportedKotlinPackages.kotlinx.serialization.builtins {
+    public final class LongAsStringSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    }
     public static func getNullable(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func ArraySerializer(
         kClass: Swift.Never,
-        elementSerializer: Swift.Never
-    ) -> Swift.Never {
+        elementSerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    public static func BooleanArraySerializer() -> Swift.Never {
+    public static func BooleanArraySerializer() -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    public static func ByteArraySerializer() -> Swift.Never {
+    public static func ByteArraySerializer() -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    public static func CharArraySerializer() -> Swift.Never {
+    public static func CharArraySerializer() -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    public static func DoubleArraySerializer() -> Swift.Never {
+    public static func DoubleArraySerializer() -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    public static func FloatArraySerializer() -> Swift.Never {
+    public static func FloatArraySerializer() -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    public static func IntArraySerializer() -> Swift.Never {
+    public static func IntArraySerializer() -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func ListSerializer(
-        elementSerializer: Swift.Never
-    ) -> Swift.Never {
+        elementSerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    public static func LongArraySerializer() -> Swift.Never {
+    public static func LongArraySerializer() -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func MapEntrySerializer(
-        keySerializer: Swift.Never,
-        valueSerializer: Swift.Never
-    ) -> Swift.Never {
+        keySerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer,
+        valueSerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func MapSerializer(
-        keySerializer: Swift.Never,
-        valueSerializer: Swift.Never
-    ) -> Swift.Never {
+        keySerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer,
+        valueSerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    public static func NothingSerializer() -> Swift.Never {
+    public static func NothingSerializer() -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func PairSerializer(
-        keySerializer: Swift.Never,
-        valueSerializer: Swift.Never
-    ) -> Swift.Never {
+        keySerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer,
+        valueSerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func SetSerializer(
-        elementSerializer: Swift.Never
-    ) -> Swift.Never {
+        elementSerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    public static func ShortArraySerializer() -> Swift.Never {
+    public static func ShortArraySerializer() -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func TripleSerializer(
-        aSerializer: Swift.Never,
-        bSerializer: Swift.Never,
-        cSerializer: Swift.Never
-    ) -> Swift.Never {
+        aSerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer,
+        bSerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer,
+        cSerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    public static func UByteArraySerializer() -> Swift.Never {
+    public static func UByteArraySerializer() -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    public static func UIntArraySerializer() -> Swift.Never {
+    public static func UIntArraySerializer() -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    public static func ULongArraySerializer() -> Swift.Never {
+    public static func ULongArraySerializer() -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
-    public static func UShortArraySerializer() -> Swift.Never {
-        fatalError()
-    }
-    public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+    public static func UShortArraySerializer() -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: ExportedKotlinPackages.kotlin.Boolean.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: ExportedKotlinPackages.kotlin.Byte.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: ExportedKotlinPackages.kotlin.Char.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: ExportedKotlinPackages.kotlin.Double.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: ExportedKotlinPackages.kotlin.Float.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: ExportedKotlinPackages.kotlin.Int.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: ExportedKotlinPackages.kotlin.Long.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: ExportedKotlinPackages.kotlin.Short.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: ExportedKotlinPackages.kotlin.String.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: ExportedKotlinPackages.kotlin.UByte.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: ExportedKotlinPackages.kotlin.UInt.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: ExportedKotlinPackages.kotlin.ULong.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
+        fatalError()
+    }
+    public static func serializer(
+        _ receiver: ExportedKotlinPackages.kotlin.UShort.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
         _ receiver: Swift.Void
-    ) -> Swift.Never {
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
     public static func serializer(
-        _ receiver: Swift.Never
-    ) -> Swift.Never {
+        _ receiver: ExportedKotlinPackages.kotlin.time.Duration.Companion
+    ) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer {
         fatalError()
     }
 }
@@ -1143,15 +1281,15 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             deserializer: Swift.Never,
-            previousValue: Swift.Never
-        ) -> Swift.Never
+            previousValue: KotlinRuntime.KotlinBase?
+        ) -> KotlinRuntime.KotlinBase?
         func decodeSequentially() -> Swift.Bool
         func decodeSerializableElement(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             deserializer: Swift.Never,
-            previousValue: Swift.Never
-        ) -> Swift.Never
+            previousValue: KotlinRuntime.KotlinBase?
+        ) -> KotlinRuntime.KotlinBase?
         func decodeShortElement(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32
@@ -1211,13 +1349,13 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.Void
         func encodeSerializableElement(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.Void
         func encodeShortElement(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
@@ -1261,10 +1399,10 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         func decodeNull() -> Swift.Never?
         func decodeNullableSerializableValue(
             deserializer: Swift.Never
-        ) -> Swift.Never
+        ) -> KotlinRuntime.KotlinBase?
         func decodeSerializableValue(
             deserializer: Swift.Never
-        ) -> Swift.Never
+        ) -> KotlinRuntime.KotlinBase?
         func decodeShort() -> Swift.Int16
         func decodeString() -> Swift.String
     }
@@ -1311,11 +1449,11 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         func encodeNull() -> Swift.Void
         func encodeNullableSerializableValue(
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.Void
         func encodeSerializableValue(
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.Void
         func encodeShort(
             value: Swift.Int16
@@ -1419,22 +1557,22 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             deserializer: Swift.Never,
-            previousValue: Swift.Never
-        ) -> Swift.Never {
+            previousValue: KotlinRuntime.KotlinBase?
+        ) -> KotlinRuntime.KotlinBase? {
             fatalError()
         }
         open func decodeSerializableElement(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             deserializer: Swift.Never,
-            previousValue: Swift.Never
-        ) -> Swift.Never {
+            previousValue: KotlinRuntime.KotlinBase?
+        ) -> KotlinRuntime.KotlinBase? {
             fatalError()
         }
         open func decodeSerializableValue(
             deserializer: Swift.Never,
-            previousValue: Swift.Never
-        ) -> Swift.Never {
+            previousValue: KotlinRuntime.KotlinBase?
+        ) -> KotlinRuntime.KotlinBase? {
             fatalError()
         }
         open func decodeShort() -> Swift.Int16 {
@@ -1592,7 +1730,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.Void {
             fatalError()
         }
@@ -1600,7 +1738,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
             index: Swift.Int32,
             serializer: Swift.Never,
-            value: Swift.Never
+            value: KotlinRuntime.KotlinBase?
         ) -> Swift.Void {
             fatalError()
         }
@@ -1652,12 +1790,12 @@ public extension ExportedKotlinPackages.kotlinx.serialization.BinaryFormat where
     public func decodeFromByteArray(
         deserializer: Swift.Never,
         bytes: ExportedKotlinPackages.kotlin.ByteArray
-    ) -> Swift.Never {
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public func encodeToByteArray(
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> ExportedKotlinPackages.kotlin.ByteArray {
         fatalError()
     }
@@ -1673,12 +1811,12 @@ public extension ExportedKotlinPackages.kotlinx.serialization.StringFormat where
     public func decodeFromString(
         deserializer: Swift.Never,
         string: Swift.String
-    ) -> Swift.Never {
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public func encodeToString(
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> Swift.String {
         fatalError()
     }
@@ -1686,20 +1824,20 @@ public extension ExportedKotlinPackages.kotlinx.serialization.StringFormat where
 public extension ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModuleCollector where Self : KotlinRuntimeSupport._KotlinBridged {
     public func contextual(
         kClass: Swift.Never,
-        provider: @escaping (Swift.Array<Swift.Never>) -> Swift.Never
+        provider: @escaping (Swift.Array<any ExportedKotlinPackages.kotlinx.serialization.KSerializer>) -> any ExportedKotlinPackages.kotlinx.serialization.KSerializer
     ) -> Swift.Void {
         fatalError()
     }
     public func contextual(
         kClass: Swift.Never,
-        serializer: Swift.Never
+        serializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
     ) -> Swift.Void {
         fatalError()
     }
     public func polymorphic(
         baseClass: Swift.Never,
         actualClass: Swift.Never,
-        actualSerializer: Swift.Never
+        actualSerializer: any ExportedKotlinPackages.kotlinx.serialization.KSerializer
     ) -> Swift.Void {
         fatalError()
     }
@@ -1718,7 +1856,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.modules.Serializer
     }
     public func polymorphicDefaultSerializer(
         baseClass: Swift.Never,
-        defaultSerializerProvider: @escaping (Swift.Never) -> Swift.Never
+        defaultSerializerProvider: @escaping (KotlinRuntime.KotlinBase) -> Swift.Never
     ) -> Swift.Void {
         fatalError()
     }
@@ -1858,8 +1996,8 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding.Composite
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
         index: Swift.Int32,
         deserializer: Swift.Never,
-        previousValue: Swift.Never
-    ) -> Swift.Never {
+        previousValue: KotlinRuntime.KotlinBase?
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public func decodeSequentially() -> Swift.Bool {
@@ -1869,8 +2007,8 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding.Composite
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
         index: Swift.Int32,
         deserializer: Swift.Never,
-        previousValue: Swift.Never
-    ) -> Swift.Never {
+        previousValue: KotlinRuntime.KotlinBase?
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public func decodeShortElement(
@@ -1956,7 +2094,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding.Composite
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
         index: Swift.Int32,
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> Swift.Void {
         fatalError()
     }
@@ -1964,7 +2102,7 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding.Composite
         descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor,
         index: Swift.Int32,
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> Swift.Void {
         fatalError()
     }
@@ -2044,12 +2182,12 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder w
     }
     public func decodeNullableSerializableValue(
         deserializer: Swift.Never
-    ) -> Swift.Never {
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public func decodeSerializableValue(
         deserializer: Swift.Never
-    ) -> Swift.Never {
+    ) -> KotlinRuntime.KotlinBase? {
         fatalError()
     }
     public func decodeShort() -> Swift.Int16 {
@@ -2130,13 +2268,13 @@ public extension ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder w
     }
     public func encodeNullableSerializableValue(
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> Swift.Void {
         fatalError()
     }
     public func encodeSerializableValue(
         serializer: Swift.Never,
-        value: Swift.Never
+        value: KotlinRuntime.KotlinBase?
     ) -> Swift.Void {
         fatalError()
     }
